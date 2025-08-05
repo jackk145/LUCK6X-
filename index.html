@@ -6,97 +6,6 @@
     <title>LUCK6 X版 - 个性化搜索引擎</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* 优化加载动画样式 */
-        .loader-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0a0a1a, #1a1a3a, #0a0a1a);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        
-        .loader {
-            position: relative;
-            width: 120px;
-            height: 120px;
-        }
-        
-        .loader-circle {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 5px solid transparent;
-            border-top-color: rgba(0, 247, 255, 0.8);
-            animation: spin 1.5s infinite linear;
-        }
-        
-        .loader-circle:nth-child(1) {
-            border-top-color: rgba(0, 247, 255, 1);
-            animation-delay: 0.1s;
-        }
-        
-        .loader-circle:nth-child(2) {
-            border-top-color: rgba(0, 247, 255, 0.9);
-            animation-delay: 0.2s;
-        }
-        
-        .loader-circle:nth-child(3) {
-            border-top-color: rgba(0, 247, 255, 0.8);
-            animation-delay: 0.3s;
-        }
-        
-        .loader-circle:nth-child(4) {
-            border-top-color: rgba(0, 247, 255, 0.7);
-            animation-delay: 0.4s;
-        }
-        
-        .loader-circle:nth-child(5) {
-            border-top-color: rgba(0, 247, 255, 0.6);
-            animation-delay: 0.5s;
-        }
-        
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-        
-        .loader-text {
-            margin-top: 30px;
-            font-size: 1.8rem;
-            color: #0ff;
-            letter-spacing: 3px;
-            text-shadow: 0 0 15px rgba(0, 247, 255, 0.7);
-            animation: textPulse 2s infinite;
-            font-family: 'Orbitron', sans-serif;
-        }
-        
-        @keyframes textPulse {
-            0%, 100% { 
-                opacity: 1; 
-                text-shadow: 0 0 15px rgba(0, 247, 255, 0.7);
-            }
-            50% { 
-                opacity: 0.8; 
-                text-shadow: 0 0 25px rgba(0, 247, 255, 1);
-                transform: scale(1.05);
-            }
-        }
-
         /* 全局样式 */
         * {
             margin: 0;
@@ -114,7 +23,6 @@
             background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
-            display: none; /* 初始隐藏，加载动画结束后显示 */
             background-attachment: fixed; /* 固定背景 */
             background-repeat: no-repeat; /* 不重复 */
         }
@@ -2001,21 +1909,51 @@
                 0 0 15px rgba(255, 60, 60, 0.4);
             color: white;
         }
+        
+        /* 新增：粒子颜色选择器 */
+        .particle-color-picker {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .particle-color-picker h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .particle-colors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .particle-color {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .particle-color:hover {
+            transform: scale(1.1);
+        }
+        
+        .particle-color.active {
+            border-color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
     </style>
 </head>
 <body class="day-mode">
-    <!-- 加载动画 -->
-    <div class="loader-container" id="loader-container">
-        <div class="loader">
-            <div class="loader-circle"></div>
-            <div class="loader-circle"></div>
-            <div class="loader-circle"></div>
-            <div class="loader-circle"></div>
-            <div class="loader-circle"></div>
-        </div>
-        <div class="loader-text">LUCK6X 加载中...</div>
-    </div>
-
     <!-- 星空弹窗 -->
     <div class="star-modal" id="star-modal">
         <div class="star-content">
@@ -2182,6 +2120,20 @@
             <div class="particles-toggle">
                 <span class="toggle-label">粒子背景效果</span>
                 <div class="toggle-btn" id="particles-toggle"></div>
+            </div>
+            
+            <!-- 粒子颜色选择器 -->
+            <div class="particle-color-picker">
+                <h3><i class="fas fa-palette"></i> 粒子颜色设置</h3>
+                <p>选择粒子效果的颜色</p>
+                <div class="particle-colors">
+                    <div class="particle-color active" style="background:#ff3c3c;" data-color="#ff3c3c"></div>
+                    <div class="particle-color" style="background:#00fffc;" data-color="#00fffc"></div>
+                    <div class="particle-color" style="background:#ff00ff;" data-color="#ff00ff"></div>
+                    <div class="particle-color" style="background:#00ff00;" data-color="#00ff00"></div>
+                    <div class="particle-color" style="background:#ffff00;" data-color="#ffff00"></div>
+                    <div class="particle-color" style="background:#ff9900;" data-color="#ff9900"></div>
+                </div>
             </div>
             
             <div class="wallpaper-control">
@@ -2468,15 +2420,679 @@
     <script>
         // 页面加载时初始化
         document.addEventListener('DOMContentLoaded', function() {
-            // 显示加载动画
-            const loaderContainer = document.getElementById('loader-container');
+            // 初始化粒子效果
+            initParticles();
             
-            // 3秒后隐藏加载动画并显示主内容
-            setTimeout(() => {
-                loaderContainer.style.display = 'none';
-                document.body.style.display = 'block';
+            // 粒子效果开关
+            const particlesToggle = document.getElementById('particles-toggle');
+            const particlesContainer = document.getElementById('particles-js');
+            
+            particlesToggle.addEventListener('click', function() {
+                if (particlesContainer.style.display === 'none') {
+                    particlesContainer.style.display = 'block';
+                    localStorage.setItem('particlesEnabled', 'true');
+                } else {
+                    particlesContainer.style.display = 'none';
+                    localStorage.setItem('particlesEnabled', 'false');
+                }
+            });
+            
+            // 初始化粒子状态
+            if (localStorage.getItem('particlesEnabled') === 'false') {
+                particlesContainer.style.display = 'none';
+            }
+            
+            // 点击特效
+            document.addEventListener('click', function(e) {
+                createRipple(e.clientX, e.clientY);
+            });
+            
+            function createRipple(x, y) {
+                const ripple = document.createElement('div');
+                ripple.className = 'click-effect';
                 
-                // 初始化粒子效果
+                // 随机渐变色
+                const colors = [
+                    'rgba(255, 60, 60, 0.5)',
+                    'rgba(106, 17, 203, 0.5)',
+                    'rgba(255, 215, 0, 0.5)',
+                    'rgba(255, 75, 43, 0.5)'
+                ];
+                
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                ripple.style.background = `radial-gradient(circle, ${color}, transparent)`;
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                
+                document.body.appendChild(ripple);
+                
+                // 动画结束后移除
+                setTimeout(() => {
+                    ripple.remove();
+                }, 800);
+            }
+            
+            // 从localStorage加载设置
+            const savedTheme = localStorage.getItem('theme');
+            const savedWallpaper = localStorage.getItem('wallpaper');
+            const savedWallpaperType = localStorage.getItem('wallpaperType');
+            const savedThemeColor = localStorage.getItem('themeColor') || '#6a11cb';
+            const savedFont = localStorage.getItem('font') || "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+            const savedButtonStyle = localStorage.getItem('buttonStyle') || 'liquid-enhanced';
+            const savedParticleColor = localStorage.getItem('particleColor') || '#ff3c3c';
+            
+            // 应用保存的主题
+            if (savedTheme === 'night-mode') {
+                document.body.classList.add('night-mode');
+                document.body.classList.remove('day-mode');
+            } else {
+                document.body.classList.add('day-mode');
+            }
+            
+            // 应用保存的壁纸
+            if (savedWallpaper) {
+                applyWallpaper(savedWallpaper, savedWallpaperType);
+            } else {
+                // 默认壁纸
+                applyWallpaper('https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80', 'image');
+            }
+            
+            // 应用主题颜色
+            applyThemeColor(savedThemeColor);
+            
+            // 应用字体
+            document.body.style.fontFamily = savedFont;
+            
+            // 更新字体选择器状态
+            document.querySelectorAll('.font-option').forEach(option => {
+                if (option.getAttribute('data-font') === savedFont) {
+                    option.classList.add('active');
+                }
+            });
+            
+            // 应用按钮样式
+            applyButtonStyle(savedButtonStyle);
+            
+            // 更新按钮样式选择器状态
+            document.querySelectorAll('.style-option').forEach(option => {
+                if (option.getAttribute('data-style') === savedButtonStyle) {
+                    option.classList.add('active');
+                }
+            });
+            
+            // 设置粒子颜色选择器状态
+            document.querySelectorAll('.particle-color').forEach(color => {
+                if (color.getAttribute('data-color') === savedParticleColor) {
+                    color.classList.add('active');
+                }
+            });
+            
+            // 粒子颜色选择器
+            document.querySelectorAll('.particle-color').forEach(color => {
+                color.addEventListener('click', function() {
+                    const colorValue = this.getAttribute('data-color');
+                    
+                    // 更新选择器状态
+                    document.querySelectorAll('.particle-color').forEach(c => {
+                        c.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // 更新粒子颜色
+                    updateParticleColor(colorValue);
+                    
+                    // 保存设置
+                    localStorage.setItem('particleColor', colorValue);
+                    
+                    logDebug(`更新粒子颜色为: ${colorValue}`);
+                });
+            });
+            
+            // 壁纸类型切换
+            const typeButtons = document.querySelectorAll('.type-btn');
+            typeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    typeButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    const type = this.getAttribute('data-type');
+                    
+                    // 显示/隐藏视频控制按钮
+                    if (type === 'video') {
+                        document.getElementById('video-controls').style.display = 'flex';
+                    } else {
+                        document.getElementById('video-controls').style.display = 'none';
+                    }
+                    
+                    // 修复：使用URL.createObjectURL处理视频文件
+                    const objectURL = URL.createObjectURL(file);
+                    applyWallpaper(objectURL, type);
+                    document.getElementById('wallpaper-input').value = "上传的文件";
+                    logDebug(`应用上传的文件作为${type === 'video' ? '视频' : '图片'}壁纸`);
+                });
+            });
+            
+            // 视频控制按钮
+            document.getElementById('play-btn').addEventListener('click', function() {
+                const video = document.querySelector('.video-background video');
+                if (video) video.play();
+            });
+            
+            document.getElementById('pause-btn').addEventListener('click', function() {
+                const video = document.querySelector('.video-background video');
+                if (video) video.pause();
+            });
+            
+            document.getElementById('mute-btn').addEventListener('click', function() {
+                const video = document.querySelector('.video-background video');
+                if (video) {
+                    video.muted = !video.muted;
+                    this.innerHTML = video.muted ? 
+                        '<i class="fas fa-volume-mute"></i> 取消静音' : 
+                        '<i class="fas fa-volume-up"></i> 静音';
+                }
+            });
+            
+            // 主题切换功能
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('night-mode');
+                document.body.classList.toggle('day-mode');
+                
+                // 保存主题设置
+                if (document.body.classList.contains('night-mode')) {
+                    localStorage.setItem('theme', 'night-mode');
+                } else {
+                    localStorage.setItem('theme', 'day-mode');
+                }
+                
+                // 更新调试面板
+                updateDebugPanel();
+            });
+            
+            // 搜索功能修改
+            const searchForm = document.getElementById('search-form');
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const searchInput = document.getElementById('search-input').value.trim();
+                const searchEngine = document.getElementById('search-engine').value;
+                
+                if (searchInput === '') return;
+                
+                // 检查特殊关键词
+                const specialKeywords = ['114514', 'luck 6', 'luck6', 'LUCK6', 'LUCK 6'];
+                if (specialKeywords.includes(searchInput.toLowerCase())) {
+                    // 显示星空弹窗
+                    document.getElementById('star-modal').style.display = 'flex';
+                    logDebug(`触发特殊关键词: "${searchInput}"`);
+                    return;
+                }
+                
+                // 检查快捷命令
+                if (searchInput.startsWith('/')) {
+                    executeCommand(searchInput);
+                    return;
+                }
+                
+                // 根据选择的搜索引擎进行搜索
+                let searchUrl;
+                switch(searchEngine) {
+                    case 'google':
+                        searchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchInput)}`;
+                        break;
+                    case 'baidu':
+                        searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(searchInput)}`;
+                        break;
+                    case 'sogou':
+                        searchUrl = `https://www.sogou.com/web?query=${encodeURIComponent(searchInput)}`;
+                        break;
+                    case 'duckduckgo':
+                        searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(searchInput)}`;
+                        break;
+                    case 'yahoo':
+                        searchUrl = `https://search.yahoo.com/search?p=${encodeURIComponent(searchInput)}`;
+                        break;
+                    case 'yandex':
+                        searchUrl = `https://yandex.com/search/?text=${encodeURIComponent(searchInput)}`;
+                        break;
+                    default: // Bing
+                        searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(searchInput)}`;
+                }
+                
+                window.open(searchUrl, '_blank');
+                logDebug(`使用${searchEngine}执行搜索: "${searchInput}"`);
+            });
+            
+            // 快捷命令执行函数
+            function executeCommand(command) {
+                const parts = command.split(' ');
+                const cmd = parts[0].toLowerCase();
+                const args = parts.slice(1).join(' ');
+                const resultDiv = document.getElementById('command-result');
+                
+                // 显示命令结果区域
+                resultDiv.style.display = 'block';
+                
+                switch(cmd) {
+                    case '/weather':
+                        fetchWeather(args);
+                        document.getElementById('search-input').value = '';
+                        resultDiv.innerHTML = `正在获取 ${args} 的天气信息...`;
+                        logDebug(`执行命令: 获取 ${args} 的天气`);
+                        break;
+                    case '/time':
+                        const now = new Date();
+                        resultDiv.innerHTML = `当前时间: ${now.toLocaleTimeString()}`;
+                        document.getElementById('search-input').value = '';
+                        logDebug(`执行命令: 显示时间`);
+                        break;
+                    case '/date':
+                        const today = new Date();
+                        resultDiv.innerHTML = `当前日期: ${today.toLocaleDateString()}`;
+                        document.getElementById('search-input').value = '';
+                        logDebug(`执行命令: 显示日期`);
+                        break;
+                    default:
+                        resultDiv.innerHTML = `未知命令: ${cmd}<br>可用命令: /weather [城市], /time, /date`;
+                        document.getElementById('search-input').value = '';
+                }
+                
+                // 5秒后隐藏结果
+                setTimeout(() => {
+                    resultDiv.style.display = 'none';
+                }, 5000);
+            }
+            
+            // 星空弹窗功能
+            const starModal = document.getElementById('star-modal');
+            const starClose = document.getElementById('star-close');
+            
+            // 关闭弹窗
+            starClose.addEventListener('click', function() {
+                starModal.style.display = 'none';
+                // 跳转到QQ群
+                window.open('https://qm.qq.com/q/8N6vDgq5j3', '_blank');
+            });
+            
+            // 点击弹窗外部关闭
+            window.addEventListener('click', function(e) {
+                if (e.target === starModal) {
+                    starModal.style.display = 'none';
+                }
+            });
+            
+            // 点击标题10次触发入群资格
+            let titleClickCount = 0;
+            const logoTitle = document.querySelector('.logo h1');
+            logoTitle.addEventListener('click', function() {
+                titleClickCount++;
+                if (titleClickCount >= 10) {
+                    document.getElementById('star-modal').style.display = 'flex';
+                    titleClickCount = 0;
+                    logDebug('通过点击标题10次触发入群资格');
+                }
+            });
+            
+            // 自定义壁纸功能
+            const wallpaperForm = document.getElementById('wallpaper-form');
+            wallpaperForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const wallpaperUrl = document.getElementById('wallpaper-input').value;
+                if (wallpaperUrl.trim() !== '') {
+                    const type = document.querySelector('.type-btn.active').getAttribute('data-type');
+                    applyWallpaper(wallpaperUrl, type);
+                    logDebug(`应用自定义壁纸: ${wallpaperUrl}`);
+                }
+            });
+            
+            // 上传图片/视频功能
+            const fileUpload = document.getElementById('file-upload');
+            fileUpload.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    const type = file.type.includes('video') ? 'video' : 'image';
+                    
+                    // 设置类型按钮
+                    typeButtons.forEach(btn => btn.classList.remove('active'));
+                    document.querySelector(`.type-btn[data-type="${type}"]`).classList.add('active');
+                    
+                    // 显示/隐藏视频控制按钮
+                    if (type === 'video') {
+                        document.getElementById('video-controls').style.display = 'flex';
+                    } else {
+                        document.getElementById('video-controls').style.display = 'none';
+                    }
+                    
+                    // 修复：使用URL.createObjectURL处理视频文件
+                    const objectURL = URL.createObjectURL(file);
+                    applyWallpaper(objectURL, type);
+                    document.getElementById('wallpaper-input').value = "上传的文件";
+                    logDebug(`应用上传的文件作为${type === 'video' ? '视频' : '图片'}壁纸`);
+                }
+            });
+            
+            // 预设壁纸功能
+            const presetButtons = document.querySelectorAll('.wallpaper-preset');
+            presetButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const wallpaperUrl = this.getAttribute('data-url');
+                    document.getElementById('wallpaper-input').value = wallpaperUrl;
+                    
+                    // 根据URL判断类型
+                    const type = wallpaperUrl.includes('.mp4') || wallpaperUrl.includes('.gif') ? 'video' : 'image';
+                    
+                    // 设置类型按钮
+                    typeButtons.forEach(btn => btn.classList.remove('active'));
+                    document.querySelector(`.type-btn[data-type="${type}"]`).classList.add('active');
+                    
+                    // 显示/隐藏视频控制按钮
+                    if (type === 'video') {
+                        document.getElementById('video-controls').style.display = 'flex';
+                    } else {
+                        document.getElementById('video-controls').style.display = 'none';
+                    }
+                    
+                    applyWallpaper(wallpaperUrl, type);
+                    logDebug(`应用预设壁纸: ${wallpaperUrl}`);
+                });
+            });
+            
+            // 随机壁纸功能
+            const randomWallpaperBtn = document.getElementById('random-wallpaper');
+            randomWallpaperBtn.addEventListener('click', function() {
+                const wallpapers = [
+                    {url: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', type: 'image'},
+                    {url: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', type: 'image'},
+                    {url: 'https://images.unsplash.com/photo-1505506874110-6a7a69069a08?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', type: 'image'},
+                    {url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', type: 'image'},
+                    {url: 'https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4', type: 'video'},
+                    {url: 'https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif', type: 'video'}
+                ];
+                const randomIndex = Math.floor(Math.random() * wallpapers.length);
+                const randomWallpaper = wallpapers[randomIndex];
+                applyWallpaper(randomWallpaper.url, randomWallpaper.type);
+                document.getElementById('wallpaper-input').value = randomWallpaper.url;
+                
+                // 设置类型按钮
+                typeButtons.forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`.type-btn[data-type="${randomWallpaper.type}"]`).classList.add('active');
+                
+                // 显示/隐藏视频控制按钮
+                if (randomWallpaper.type === 'video') {
+                    document.getElementById('video-controls').style.display = 'flex';
+                } else {
+                    document.getElementById('video-controls').style.display = 'none';
+                }
+                
+                logDebug(`应用随机壁纸: ${randomWallpaper.url}`);
+            });
+            
+            // 重置设置功能
+            const resetBtn = document.getElementById('reset-settings');
+            resetBtn.addEventListener('click', function() {
+                localStorage.removeItem('theme');
+                localStorage.removeItem('wallpaper');
+                localStorage.removeItem('wallpaperType');
+                localStorage.removeItem('themeColor');
+                localStorage.removeItem('font');
+                localStorage.removeItem('particlesEnabled');
+                localStorage.removeItem('buttonStyle');
+                localStorage.removeItem('particleColor');
+                document.body.classList.remove('night-mode');
+                document.body.classList.add('day-mode');
+                document.body.style.backgroundImage = "url('https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80')";
+                document.body.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+                particlesContainer.style.display = 'block';
+                
+                // 移除视频背景
+                const videoBg = document.querySelector('.video-background');
+                videoBg.innerHTML = '';
+                
+                document.getElementById('wallpaper-input').value = '';
+                
+                // 重置主题颜色
+                applyThemeColor('#6a11cb');
+                
+                // 重置字体选择器
+                document.querySelectorAll('.font-option').forEach(option => {
+                    option.classList.remove('active');
+                    if (option.getAttribute('data-font') === "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif") {
+                        option.classList.add('active');
+                    }
+                });
+                
+                // 重置按钮样式
+                applyButtonStyle('liquid-enhanced');
+                document.querySelectorAll('.style-option').forEach(option => {
+                    option.classList.remove('active');
+                    if (option.getAttribute('data-style') === 'liquid-enhanced') {
+                        option.classList.add('active');
+                    }
+                });
+                
+                // 重置粒子颜色
+                updateParticleColor('#ff3c3c');
+                document.querySelectorAll('.particle-color').forEach(color => {
+                    color.classList.remove('active');
+                    if (color.getAttribute('data-color') === '#ff3c3c') {
+                        color.classList.add('active');
+                    }
+                });
+                localStorage.setItem('particleColor', '#ff3c3c');
+                
+                logDebug('设置已重置为默认值');
+                updateDebugPanel();
+                alert('设置已重置为默认值！');
+            });
+            
+            // 调试面板功能
+            const debugToggle = document.getElementById('debug-toggle');
+            const debugPanel = document.getElementById('debug-panel');
+            
+            debugToggle.addEventListener('click', function() {
+                debugPanel.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // 调试面板工具
+            document.getElementById('back-to-top').addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            document.getElementById('refresh-page').addEventListener('click', function() {
+                location.reload();
+            });
+            
+            document.getElementById('export-settings').addEventListener('click', function() {
+                const settings = {
+                    theme: localStorage.getItem('theme') || 'day-mode',
+                    wallpaper: localStorage.getItem('wallpaper') || 'default',
+                    wallpaperType: localStorage.getItem('wallpaperType') || 'image',
+                    themeColor: localStorage.getItem('themeColor') || '#6a11cb',
+                    font: localStorage.getItem('font') || "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                    particlesEnabled: localStorage.getItem('particlesEnabled') || 'true',
+                    buttonStyle: localStorage.getItem('buttonStyle') || 'liquid-enhanced',
+                    particleColor: localStorage.getItem('particleColor') || '#ff3c3c'
+                };
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(settings, null, 2));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", "search-settings.json");
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+                logDebug('设置已导出为JSON文件');
+            });
+            
+            document.getElementById('clear-cache').addEventListener('click', function() {
+                localStorage.clear();
+                logDebug('本地缓存已清除');
+                updateDebugPanel();
+            });
+            
+            // GitHub仓库按钮
+            document.getElementById('github-repo').addEventListener('click', function() {
+                window.open('https://github.com/jackk145/LUCK6X-', '_blank');
+                logDebug('打开GitHub仓库');
+            });
+            
+            // 测试按钮功能
+            document.getElementById('test-btn-1').addEventListener('click', function() {
+                window.open('https://littleskin.cn/skinlib?filter=cape&sort=time&page=4', '_blank');
+                logDebug('打开测试页面: 我的世界披风库');
+            });
+            
+            document.getElementById('test-btn-2').addEventListener('click', function() {
+                window.open('https://ewanhowell.com/plugins/minecraft-title-generator/', '_blank');
+                logDebug('打开测试页面: Minecraft标题生成器');
+            });
+            
+            document.getElementById('test-btn-3').addEventListener('click', function() {
+                window.open('https://textcraft.net/', '_blank');
+                logDebug('打开测试页面: 文字艺术生成器');
+            });
+            
+            // 新增资源下载按钮功能
+            document.getElementById('test-btn-4').addEventListener('click', function() {
+                window.open('https://workdrive.zoho.com.cn/file/dqd1m14a62490b4ef422085fdc7058380c0e9', '_blank');
+                logDebug('打开资源: csgo测试整合包');
+            });
+            
+            document.getElementById('test-btn-5').addEventListener('click', function() {
+                window.open('https://workdrive.zoho.com.cn/file/dqd1m02aaaab914374d428dc940655eae37e6', '_blank');
+                logDebug('打开资源: LUCK6高版本【无饰品】');
+            });
+            
+            document.getElementById('test-btn-6').addEventListener('click', function() {
+                window.open('https://workdrive.zoho.com.cn/file/dqd1mf40395c92c134739a2e65f5eaa073adf', '_blank');
+                logDebug('打开资源: he world0.7【测试】');
+            });
+            
+            document.getElementById('test-btn-7').addEventListener('click', function() {
+                window.open('https://workdrive.zoho.com.cn/file/dqd1mdaf88522b9004b92ba0a93085069bba1', '_blank');
+                logDebug('打开资源: LUCK 6【bug过多停更】');
+            });
+            
+            // 应用壁纸的函数
+            function applyWallpaper(url, type) {
+                // 清除当前背景
+                document.body.style.backgroundImage = '';
+                const videoBg = document.querySelector('.video-background');
+                videoBg.innerHTML = '';
+                
+                // 保存壁纸设置
+                localStorage.setItem('wallpaper', url);
+                localStorage.setItem('wallpaperType', type);
+                
+                if (type === 'image') {
+                    // 如果是图片（包括GIF）
+                    document.body.style.backgroundImage = `url('${url}')`;
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundPosition = 'center';
+                    document.body.style.backgroundAttachment = 'fixed'; // 固定背景
+                    document.body.style.backgroundRepeat = 'no-repeat'; // 不重复
+                } else {
+                    // 如果是视频
+                    const video = document.createElement('video');
+                    video.autoplay = true;
+                    video.loop = true;
+                    video.muted = true;
+                    video.playsInline = true;
+                    video.src = url;
+                    
+                    // 修复：确保视频元素被正确添加到DOM
+                    videoBg.appendChild(video);
+                    
+                    // 修复：添加事件监听器处理视频加载
+                    video.addEventListener('error', function() {
+                        console.error('视频加载失败:', url);
+                        logDebug(`视频加载失败: ${url}`);
+                    });
+                }
+                
+                updateDebugPanel();
+            }
+            
+            // 应用主题颜色
+            function applyThemeColor(color) {
+                // 更新主要元素
+                document.documentElement.style.setProperty('--primary-color', color);
+                
+                // 保存设置
+                localStorage.setItem('themeColor', color);
+            }
+            
+            // 字体选择器
+            document.querySelectorAll('.font-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const font = this.getAttribute('data-font');
+                    document.body.style.fontFamily = font;
+                    
+                    // 更新选择器状态
+                    document.querySelectorAll('.font-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // 保存设置
+                    localStorage.setItem('font', font);
+                    
+                    logDebug(`应用字体: ${font}`);
+                });
+            });
+            
+            // 按钮样式选择器
+            document.querySelectorAll('.style-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const style = this.getAttribute('data-style');
+                    
+                    // 更新选择器状态
+                    document.querySelectorAll('.style-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // 应用样式
+                    applyButtonStyle(style);
+                    
+                    // 保存设置
+                    localStorage.setItem('buttonStyle', style);
+                    
+                    logDebug(`应用按钮样式: ${style}`);
+                });
+            });
+            
+            // 应用按钮样式函数
+            function applyButtonStyle(style) {
+                const featureBtns = document.querySelectorAll('.feature-btn');
+                
+                // 移除所有样式类
+                featureBtns.forEach(btn => {
+                    btn.classList.remove('cyber-style');
+                });
+                
+                // 应用新样式
+                if (style === 'cyber') {
+                    featureBtns.forEach(btn => {
+                        btn.classList.add('cyber-style');
+                    });
+                }
+            }
+            
+            // 初始化粒子效果
+            function initParticles() {
+                // 从本地存储获取粒子颜色
+                const savedParticleColor = localStorage.getItem('particleColor') || '#ff3c3c';
+                
+                // 设置颜色选择器的值
+                document.querySelectorAll('.particle-color').forEach(color => {
+                    if (color.getAttribute('data-color') === savedParticleColor) {
+                        color.classList.add('active');
+                    }
+                });
+                
                 particlesJS('particles-js', {
                     particles: {
                         number: {
@@ -2487,7 +3103,7 @@
                             }
                         },
                         color: {
-                            value: "#ff3c3c"
+                            value: savedParticleColor
                         },
                         shape: {
                             type: "circle",
@@ -2519,7 +3135,7 @@
                         line_linked: {
                             enable: true,
                             distance: 150,
-                            color: "#ff3c3c",
+                            color: savedParticleColor,
                             opacity: 0.4,
                             width: 1
                         },
@@ -2565,1052 +3181,453 @@
                     },
                     retina_detect: true
                 });
+            }
+            
+            // 更新粒子颜色
+            function updateParticleColor(color) {
+                // 获取particles.js实例
+                if (window.pJSDom && window.pJSDom.length > 0) {
+                    const particles = window.pJSDom[0].pJS.particles;
+                    particles.color.value = color;
+                    particles.line_linked.color = color;
+                    
+                    // 重新初始化粒子系统
+                    window.pJSDom[0].pJS.fn.vendors.destroy();
+                    window.pJSDom[0].pJS.fn.vendors.init();
+                    
+                    logDebug(`粒子颜色更新为: ${color}`);
+                }
+            }
+            
+            // 登录/注册功能
+            const authModal = document.getElementById('auth-modal');
+            const authClose = document.getElementById('auth-close');
+            const userBtn = document.getElementById('user-btn');
+            const userInfo = document.getElementById('user-info');
+            const logoutBtn = document.getElementById('logout-btn');
+            const showRegister = document.getElementById('show-register');
+            const showLogin = document.getElementById('show-login');
+            const tabs = document.querySelectorAll('.auth-tab');
+            const forms = document.querySelectorAll('.auth-form');
+            
+            // 打开登录模态框
+            userBtn.addEventListener('click', function() {
+                authModal.style.display = 'flex';
+            });
+            
+            // 关闭登录模态框
+            authClose.addEventListener('click', function() {
+                authModal.style.display = 'none';
+            });
+            
+            // 点击模态框外部关闭
+            window.addEventListener('click', function(e) {
+                if (e.target === authModal) {
+                    authModal.style.display = 'none';
+                }
+            });
+            
+            // 切换登录/注册标签
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    // 更新标签状态
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 更新表单显示
+                    forms.forEach(form => {
+                        form.classList.remove('active');
+                        if (form.id === `${tabName}-form`) {
+                            form.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            // 显示注册表单
+            showRegister.addEventListener('click', function(e) {
+                e.preventDefault();
+                tabs.forEach(t => t.classList.remove('active'));
+                document.querySelector('.auth-tab[data-tab="register"]').classList.add('active');
                 
-                // 粒子效果开关
-                const particlesToggle = document.getElementById('particles-toggle');
-                const particlesContainer = document.getElementById('particles-js');
-                
-                particlesToggle.addEventListener('click', function() {
-                    if (particlesContainer.style.display === 'none') {
-                        particlesContainer.style.display = 'block';
-                        localStorage.setItem('particlesEnabled', 'true');
-                    } else {
-                        particlesContainer.style.display = 'none';
-                        localStorage.setItem('particlesEnabled', 'false');
+                forms.forEach(form => {
+                    form.classList.remove('active');
+                    if (form.id === 'register-form') {
+                        form.classList.add('active');
                     }
                 });
+            });
+            
+            // 显示登录表单
+            showLogin.addEventListener('click', function(e) {
+                e.preventDefault();
+                tabs.forEach(t => t.classList.remove('active'));
+                document.querySelector('.auth-tab[data-tab="login"]').classList.add('active');
                 
-                // 初始化粒子状态
-                if (localStorage.getItem('particlesEnabled') === 'false') {
-                    particlesContainer.style.display = 'none';
+                forms.forEach(form => {
+                    form.classList.remove('active');
+                    if (form.id === 'login-form') {
+                        form.classList.add('active');
+                    }
+                });
+            });
+            
+            // 登录表单提交
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                
+                // 模拟登录成功
+                userBtn.style.display = 'none';
+                userInfo.style.display = 'flex';
+                document.getElementById('username-display').textContent = email.split('@')[0];
+                document.getElementById('user-avatar').textContent = email.charAt(0).toUpperCase();
+                
+                // 保存登录状态
+                localStorage.setItem('userLoggedIn', 'true');
+                localStorage.setItem('userEmail', email);
+                localStorage.setItem('username', email.split('@')[0]);
+                
+                authModal.style.display = 'none';
+                logDebug(`用户登录: ${email}`);
+                alert('登录成功！');
+            });
+            
+            // 注册表单提交
+            document.getElementById('register-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('register-username').value;
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+                const confirm = document.getElementById('register-confirm').value;
+                
+                if (password !== confirm) {
+                    alert('两次输入的密码不一致！');
+                    return;
                 }
                 
-                // 点击特效
-                document.addEventListener('click', function(e) {
-                    createRipple(e.clientX, e.clientY);
-                });
+                // 模拟注册成功并登录
+                userBtn.style.display = 'none';
+                userInfo.style.display = 'flex';
+                document.getElementById('username-display').textContent = username;
+                document.getElementById('user-avatar').textContent = username.charAt(0).toUpperCase();
                 
-                function createRipple(x, y) {
-                    const ripple = document.createElement('div');
-                    ripple.className = 'click-effect';
+                // 保存登录状态
+                localStorage.setItem('userLoggedIn', 'true');
+                localStorage.setItem('userEmail', email);
+                localStorage.setItem('username', username);
+                
+                authModal.style.display = 'none';
+                logDebug(`新用户注册: ${username} (${email})`);
+                alert('注册成功！已自动登录');
+            });
+            
+            // 退出登录
+            logoutBtn.addEventListener('click', function() {
+                userBtn.style.display = 'block';
+                userInfo.style.display = 'none';
+                
+                // 清除登录状态
+                localStorage.removeItem('userLoggedIn');
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('username');
+                
+                logDebug('用户已退出登录');
+            });
+            
+            // 检查是否已登录
+            if (localStorage.getItem('userLoggedIn') === 'true') {
+                userBtn.style.display = 'none';
+                userInfo.style.display = 'flex';
+                document.getElementById('username-display').textContent = localStorage.getItem('username') || '用户';
+                document.getElementById('user-avatar').textContent = (localStorage.getItem('username') || 'U').charAt(0).toUpperCase();
+            }
+            
+            // 获取Windows版本
+            function getWindowsVersion() {
+                const userAgent = navigator.userAgent;
+                if (userAgent.includes("Windows NT 10.0")) return "Windows 10";
+                if (userAgent.includes("Windows NT 6.3")) return "Windows 8.1";
+                if (userAgent.includes("Windows NT 6.2")) return "Windows 8";
+                if (userAgent.includes("Windows NT 6.1")) return "Windows 7";
+                if (userAgent.includes("Windows NT 6.0")) return "Windows Vista";
+                if (userAgent.includes("Windows NT 5.1")) return "Windows XP";
+                if (userAgent.includes("Windows NT 5.0")) return "Windows 2000";
+                if (userAgent.includes("Windows 11")) return "Windows 11";
+                return "未知版本";
+            }
+            
+            // 获取电池信息
+            function getBatteryInfo(callback) {
+                if ('getBattery' in navigator) {
+                    navigator.getBattery().then(function(battery) {
+                        callback({
+                            level: Math.round(battery.level * 100) + '%',
+                            charging: battery.charging ? '充电中' : '未充电'
+                        });
+                    });
+                } else {
+                    callback({ level: '电脑不支持', charging: '' });
+                }
+            }
+            
+            // 获取性能信息
+            function getPerformanceInfo() {
+                const memory = performance.memory;
+                const now = performance.now();
+                
+                // 计算性能评分（伪代码，实际中需要更复杂的计算）
+                const perfScore = Math.min(100, Math.round(
+                    (navigator.hardwareConcurrency || 4) * 10 +
+                    (memory ? (memory.jsHeapSizeLimit / 1024 / 1024) : 200) / 5
+                ));
+                
+                return {
+                    perfScore: perfScore,
+                    cpuCores: navigator.hardwareConcurrency || '未知',
+                    memory: memory ? Math.round(memory.jsHeapSizeLimit / 1024 / 1024) + 'MB' : '未知'
+                };
+            }
+            
+            // 更新调试面板信息
+            function updateDebugPanel() {
+                const theme = document.body.classList.contains('night-mode') ? '夜间模式' : '日间模式';
+                const wallpaper = localStorage.getItem('wallpaper') || '默认壁纸';
+                const wallpaperType = localStorage.getItem('wallpaperType') || 'image';
+                const themeColor = localStorage.getItem('themeColor') || '#6a11cb';
+                const font = localStorage.getItem('font') || '默认';
+                const buttonStyle = localStorage.getItem('buttonStyle') || 'iOS磨砂效果';
+                const particleColor = localStorage.getItem('particleColor') || '#ff3c3c';
+                const particlesEnabled = localStorage.getItem('particlesEnabled') !== 'false' ? '开启' : '关闭';
+                const userAgent = navigator.userAgent;
+                const screenRes = `${screen.width}×${screen.height}`;
+                const windowSize = `${window.innerWidth}×${window.innerHeight}`;
+                const windowsVersion = getWindowsVersion();
+                const perfInfo = getPerformanceInfo();
+                
+                // 更新用户设置
+                document.getElementById('user-settings-list').innerHTML = `
+                    <li>当前主题: <span class="value">${theme}</span></li>
+                    <li>壁纸类型: <span class="value">${wallpaperType === 'image' ? '静态图片' : '动态视频/GIF'}</span></li>
+                    <li>主题颜色: <span class="value">${themeColor}</span></li>
+                    <li>界面字体: <span class="value">${font}</span></li>
+                    <li>按钮样式: <span class="value">${buttonStyle === 'cyber' ? '赛博科技风' : 'iOS磨砂效果'}</span></li>
+                    <li>粒子效果: <span class="value">${particlesEnabled}</span></li>
+                    <li>粒子颜色: <span class="value">${particleColor}</span></li>
+                    <li>用户状态: <span class="value">${localStorage.getItem('userLoggedIn') === 'true' ? '已登录' : '未登录'}</span></li>
+                `;
+                
+                // 更新系统信息
+                document.getElementById('system-info-list').innerHTML = `
+                    <li>浏览器: <span class="value">${getBrowserName()}</span></li>
+                    <li>操作系统: <span class="value">${getOSName()} ${windowsVersion}</span></li>
+                    <li>屏幕分辨率: <span class="value">${screenRes}</span></li>
+                    <li>窗口尺寸: <span class="value">${windowSize}</span></li>
+                    <li>设备类型: <span class="value">${isMobile() ? '移动设备' : '桌面设备'}</span></li>
+                    <li>网络状态: <span class="value">${navigator.onLine ? '在线' : '离线'}</span></li>
+                `;
+                
+                // 更新性能信息
+                document.getElementById('performance-info-list').innerHTML = `
+                    <li>CPU核心数: <span class="value">${perfInfo.cpuCores}</span></li>
+                    <li>内存限制: <span class="value">${perfInfo.memory}</span></li>
+                    <li>性能评分: <span class="value">${perfInfo.perfScore}/100</span></li>
+                `;
+                
+                // 更新性能指示器
+                document.getElementById('performance-fill').style.width = perfInfo.perfScore + '%';
+                
+                // 添加电池信息（异步）
+                getBatteryInfo(function(battery) {
+                    const batteryInfo = document.createElement('li');
+                    batteryInfo.innerHTML = `电池状态: 
+                        <span class="value battery-info">
+                            <span class="battery-level">
+                                <span class="battery-fill" style="width:${battery.level === '电脑不支持' ? '0' : parseInt(battery.level)}%"></span>
+                            </span>
+                            <span class="battery-percentage">${battery.level} ${battery.charging}</span>
+                        </span>`;
+                    document.getElementById('system-info-list').appendChild(batteryInfo);
+                });
+            }
+            
+            // 获取浏览器名称
+            function getBrowserName() {
+                const userAgent = navigator.userAgent;
+                if (userAgent.includes("Chrome")) return "LUCK6 X提供软件";
+                if (userAgent.includes("Firefox")) return "未知";
+                if (userAgent.includes("Safari")) return "未知";
+                if (userAgent.includes("Edge")) return "Edge";
+                if (userAgent.includes("Opera")) return "未知";
+                if (userAgent.includes("MSIE")) return "未知";
+                return "LUCK6 X提供软件";
+            }
+            
+            // 获取操作系统名称
+            function getOSName() {
+                const userAgent = navigator.userAgent;
+                if (userAgent.includes("Win")) return "Windows";
+                if (userAgent.includes("Mac")) return "MacOS";
+                if (userAgent.includes("Linux")) return "Linux";
+                if (userAgent.includes("Android")) return "Android";
+                if (userAgent.includes("iOS")) return "iOS";
+                return "未知系统";
+            }
+            
+            // 检测是否为移动设备
+            function isMobile() {
+                return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            }
+            
+            // 调试日志
+            function logDebug(message) {
+                const debugOutput = document.getElementById('debug-output');
+                debugOutput.innerHTML += `> ${message}<br>`;
+                debugOutput.parentElement.scrollTop = debugOutput.parentElement.scrollHeight;
+            }
+            
+            // 滚动时显示/隐藏调试面板
+            let lastScrollTop = 0;
+            window.addEventListener('scroll', function() {
+                const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (currentScroll > lastScrollTop && currentScroll > 200) {
+                    debugPanel.style.display = 'block';
+                }
+                
+                lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+            });
+            
+            // 初始化调试面板
+            updateDebugPanel();
+            
+            // 更新时间显示
+            function updateTime() {
+                const now = new Date();
+                document.getElementById('current-time').textContent = now.toLocaleTimeString();
+            }
+            setInterval(updateTime, 1000);
+            updateTime();
+            
+            // 新增的制作者按钮功能
+            document.getElementById('creator-douyin').addEventListener('click', function() {
+                window.open('https://www.douyin.com/user/MS4wLjABAAAARy4OPh14CAjzCAThmUyWuoHtNz2jo9y4AXW0VoQdJ0UAdH9HSKQA0Czes672cNce?from_tab_name=main', '_blank');
+                logDebug('打开制作者抖音主页');
+            });
+            
+            document.getElementById('creator-bilibili').addEventListener('click', function() {
+                window.open('https://space.bilibili.com/229098055?spm_id_from=333.337.0.0', '_blank');
+                logDebug('打开制作者B站主页');
+            });
+            
+            document.getElementById('creator-kuaishou').addEventListener('click', function() {
+                window.open('https://www.kuaishou.com/profile/3x3fyraqb4c9d4i', '_blank');
+                logDebug('打开赞助者快手主页');
+            });
+            
+            // 幸运值测试功能
+            document.getElementById('lucky-test-btn').addEventListener('click', function() {
+                const luckyNumber = Math.floor(Math.random() * 100) + 1;
+                const luckyResult = document.getElementById('lucky-result');
+                const luckyFill = document.getElementById('lucky-fill');
+                
+                let comment = '';
+                if (luckyNumber <= 10) {
+                    comment = '6【无话可说了】';
+                } else if (luckyNumber <= 30) {
+                    comment = '一般般而已，继续加油';
+                } else if (luckyNumber <= 70) {
+                    comment = '在高点！？';
+                } else if (luckyNumber <= 90) {
+                    comment = '运气不赖吗！';
+                } else {
+                    comment = 'good luck！';
+                }
+                
+                // 显示结果
+                luckyResult.innerHTML = `
+                    <div class="lucky-number">${luckyNumber}</div>
+                    <div class="lucky-comment">${comment}</div>
+                `;
+                
+                // 更新进度条
+                luckyFill.style.width = `${luckyNumber}%`;
+                
+                logDebug(`测试幸运值: ${luckyNumber} - ${comment}`);
+            });
+            
+            // 天气功能
+            const weatherWidget = document.getElementById('weather-widget');
+            const weatherRefresh = document.getElementById('weather-refresh');
+            const weatherInfo = weatherWidget.querySelector('.weather-info');
+            
+            // 获取天气函数
+            async function fetchWeather(city = 'auto') {
+                // 使用OpenWeatherMap API
+                const apiKey = 'YOUR_API_KEY'; // 替换为您的API密钥
+                let apiUrl;
+                if (city === 'auto') {
+                    // 通过IP获取位置
+                    apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=Beijing&appid=${apiKey}&units=metric&lang=zh_cn`;
+                } else {
+                    apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=zh_cn`;
+                }
+                
+                try {
+                    const response = await fetch(apiUrl);
+                    const data = await response.json();
+                    if (data.cod === 200) {
+                        const temp = Math.round(data.main.temp);
+                        const description = data.weather[0].description;
+                        const iconCode = data.weather[0].icon;
+                        const iconUrl = `http://openweathermap.org/img/wn/${iconCode}.png`;
+                        weatherInfo.innerHTML = `<img src="${iconUrl}" alt="${description}"> ${temp}°C ${description}`;
+                    } else {
+                        weatherInfo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> 天气获取失败`;
+                    }
+                } catch (error) {
+                    weatherInfo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> 天气获取失败`;
+                }
+            }
+            
+            // 点击刷新天气
+            weatherRefresh.addEventListener('click', function() {
+                weatherInfo.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 加载中...';
+                fetchWeather();
+            });
+            
+            // 初始获取天气
+            fetchWeather();
+            
+            // 按钮点击波纹效果
+            document.querySelectorAll('button').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // 创建波纹元素
+                    const ripple = document.createElement('span');
+                    ripple.classList.add('ripple');
                     
-                    // 随机渐变色
-                    const colors = [
-                        'rgba(255, 60, 60, 0.5)',
-                        'rgba(106, 17, 203, 0.5)',
-                        'rgba(255, 215, 0, 0.5)',
-                        'rgba(255, 75, 43, 0.5)'
-                    ];
+                    // 设置波纹位置
+                    const rect = button.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
                     
-                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
                     
-                    ripple.style.background = `radial-gradient(circle, ${color}, transparent)`;
-                    ripple.style.left = `${x}px`;
-                    ripple.style.top = `${y}px`;
-                    
-                    document.body.appendChild(ripple);
+                    // 添加到按钮
+                    this.appendChild(ripple);
                     
                     // 动画结束后移除
                     setTimeout(() => {
                         ripple.remove();
-                    }, 800);
-                }
-                
-                // 从localStorage加载设置
-                const savedTheme = localStorage.getItem('theme');
-                const savedWallpaper = localStorage.getItem('wallpaper');
-                const savedWallpaperType = localStorage.getItem('wallpaperType');
-                const savedThemeColor = localStorage.getItem('themeColor') || '#6a11cb';
-                const savedFont = localStorage.getItem('font') || "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
-                const savedButtonStyle = localStorage.getItem('buttonStyle') || 'liquid-enhanced';
-                
-                // 应用保存的主题
-                if (savedTheme === 'night-mode') {
-                    document.body.classList.add('night-mode');
-                    document.body.classList.remove('day-mode');
-                } else {
-                    document.body.classList.add('day-mode');
-                }
-                
-                // 应用保存的壁纸
-                if (savedWallpaper) {
-                    applyWallpaper(savedWallpaper, savedWallpaperType);
-                } else {
-                    // 默认壁纸
-                    applyWallpaper('https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80', 'image');
-                }
-                
-                // 应用主题颜色
-                applyThemeColor(savedThemeColor);
-                
-                // 应用字体
-                document.body.style.fontFamily = savedFont;
-                
-                // 更新字体选择器状态
-                document.querySelectorAll('.font-option').forEach(option => {
-                    if (option.getAttribute('data-font') === savedFont) {
-                        option.classList.add('active');
-                    }
+                    }, 600);
                 });
-                
-                // 应用按钮样式
-                applyButtonStyle(savedButtonStyle);
-                
-                // 更新按钮样式选择器状态
-                document.querySelectorAll('.style-option').forEach(option => {
-                    if (option.getAttribute('data-style') === savedButtonStyle) {
-                        option.classList.add('active');
-                    }
-                });
-                
-                // 壁纸类型切换
-                const typeButtons = document.querySelectorAll('.type-btn');
-                typeButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        typeButtons.forEach(btn => btn.classList.remove('active'));
-                        this.classList.add('active');
-                        const type = this.getAttribute('data-type');
-                        
-                        // 显示/隐藏视频控制按钮
-                        if (type === 'video') {
-                            document.getElementById('video-controls').style.display = 'flex';
-                        } else {
-                            document.getElementById('video-controls').style.display = 'none';
-                        }
-                        
-                        // 修复：使用URL.createObjectURL处理视频文件
-                        const objectURL = URL.createObjectURL(file);
-                        applyWallpaper(objectURL, type);
-                        document.getElementById('wallpaper-input').value = "上传的文件";
-                        logDebug(`应用上传的文件作为${type === 'video' ? '视频' : '图片'}壁纸`);
-                    });
-                });
-                
-                // 视频控制按钮
-                document.getElementById('play-btn').addEventListener('click', function() {
-                    const video = document.querySelector('.video-background video');
-                    if (video) video.play();
-                });
-                
-                document.getElementById('pause-btn').addEventListener('click', function() {
-                    const video = document.querySelector('.video-background video');
-                    if (video) video.pause();
-                });
-                
-                document.getElementById('mute-btn').addEventListener('click', function() {
-                    const video = document.querySelector('.video-background video');
-                    if (video) {
-                        video.muted = !video.muted;
-                        this.innerHTML = video.muted ? 
-                            '<i class="fas fa-volume-mute"></i> 取消静音' : 
-                            '<i class="fas fa-volume-up"></i> 静音';
-                    }
-                });
-                
-                // 主题切换功能
-                const themeToggle = document.getElementById('theme-toggle');
-                themeToggle.addEventListener('click', function() {
-                    document.body.classList.toggle('night-mode');
-                    document.body.classList.toggle('day-mode');
-                    
-                    // 保存主题设置
-                    if (document.body.classList.contains('night-mode')) {
-                        localStorage.setItem('theme', 'night-mode');
-                    } else {
-                        localStorage.setItem('theme', 'day-mode');
-                    }
-                    
-                    // 更新调试面板
-                    updateDebugPanel();
-                });
-                
-                // 搜索功能修改
-                const searchForm = document.getElementById('search-form');
-                searchForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const searchInput = document.getElementById('search-input').value.trim();
-                    const searchEngine = document.getElementById('search-engine').value;
-                    
-                    if (searchInput === '') return;
-                    
-                    // 检查特殊关键词
-                    const specialKeywords = ['114514', 'luck 6', 'luck6', 'LUCK6', 'LUCK 6'];
-                    if (specialKeywords.includes(searchInput.toLowerCase())) {
-                        // 显示星空弹窗
-                        document.getElementById('star-modal').style.display = 'flex';
-                        logDebug(`触发特殊关键词: "${searchInput}"`);
-                        return;
-                    }
-                    
-                    // 检查快捷命令
-                    if (searchInput.startsWith('/')) {
-                        executeCommand(searchInput);
-                        return;
-                    }
-                    
-                    // 根据选择的搜索引擎进行搜索
-                    let searchUrl;
-                    switch(searchEngine) {
-                        case 'google':
-                            searchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchInput)}`;
-                            break;
-                        case 'baidu':
-                            searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(searchInput)}`;
-                            break;
-                        case 'sogou':
-                            searchUrl = `https://www.sogou.com/web?query=${encodeURIComponent(searchInput)}`;
-                            break;
-                        case 'duckduckgo':
-                            searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(searchInput)}`;
-                            break;
-                        case 'yahoo':
-                            searchUrl = `https://search.yahoo.com/search?p=${encodeURIComponent(searchInput)}`;
-                            break;
-                        case 'yandex':
-                            searchUrl = `https://yandex.com/search/?text=${encodeURIComponent(searchInput)}`;
-                            break;
-                        default: // Bing
-                            searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(searchInput)}`;
-                    }
-                    
-                    window.open(searchUrl, '_blank');
-                    logDebug(`使用${searchEngine}执行搜索: "${searchInput}"`);
-                });
-                
-                // 快捷命令执行函数
-                function executeCommand(command) {
-                    const parts = command.split(' ');
-                    const cmd = parts[0].toLowerCase();
-                    const args = parts.slice(1).join(' ');
-                    const resultDiv = document.getElementById('command-result');
-                    
-                    // 显示命令结果区域
-                    resultDiv.style.display = 'block';
-                    
-                    switch(cmd) {
-                        case '/weather':
-                            fetchWeather(args);
-                            document.getElementById('search-input').value = '';
-                            resultDiv.innerHTML = `正在获取 ${args} 的天气信息...`;
-                            logDebug(`执行命令: 获取 ${args} 的天气`);
-                            break;
-                        case '/time':
-                            const now = new Date();
-                            resultDiv.innerHTML = `当前时间: ${now.toLocaleTimeString()}`;
-                            document.getElementById('search-input').value = '';
-                            logDebug(`执行命令: 显示时间`);
-                            break;
-                        case '/date':
-                            const today = new Date();
-                            resultDiv.innerHTML = `当前日期: ${today.toLocaleDateString()}`;
-                            document.getElementById('search-input').value = '';
-                            logDebug(`执行命令: 显示日期`);
-                            break;
-                        default:
-                            resultDiv.innerHTML = `未知命令: ${cmd}<br>可用命令: /weather [城市], /time, /date`;
-                            document.getElementById('search-input').value = '';
-                    }
-                    
-                    // 5秒后隐藏结果
-                    setTimeout(() => {
-                        resultDiv.style.display = 'none';
-                    }, 5000);
-                }
-                
-                // 星空弹窗功能
-                const starModal = document.getElementById('star-modal');
-                const starClose = document.getElementById('star-close');
-                
-                // 关闭弹窗
-                starClose.addEventListener('click', function() {
-                    starModal.style.display = 'none';
-                    // 跳转到QQ群
-                    window.open('https://qm.qq.com/q/8N6vDgq5j3', '_blank');
-                });
-                
-                // 点击弹窗外部关闭
-                window.addEventListener('click', function(e) {
-                    if (e.target === starModal) {
-                        starModal.style.display = 'none';
-                    }
-                });
-                
-                // 点击标题10次触发入群资格
-                let titleClickCount = 0;
-                const logoTitle = document.querySelector('.logo h1');
-                logoTitle.addEventListener('click', function() {
-                    titleClickCount++;
-                    if (titleClickCount >= 10) {
-                        document.getElementById('star-modal').style.display = 'flex';
-                        titleClickCount = 0;
-                        logDebug('通过点击标题10次触发入群资格');
-                    }
-                });
-                
-                // 自定义壁纸功能
-                const wallpaperForm = document.getElementById('wallpaper-form');
-                wallpaperForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const wallpaperUrl = document.getElementById('wallpaper-input').value;
-                    if (wallpaperUrl.trim() !== '') {
-                        const type = document.querySelector('.type-btn.active').getAttribute('data-type');
-                        applyWallpaper(wallpaperUrl, type);
-                        logDebug(`应用自定义壁纸: ${wallpaperUrl}`);
-                    }
-                });
-                
-                // 上传图片/视频功能
-                const fileUpload = document.getElementById('file-upload');
-                fileUpload.addEventListener('change', function(e) {
-                    if (this.files && this.files[0]) {
-                        const file = this.files[0];
-                        const type = file.type.includes('video') ? 'video' : 'image';
-                        
-                        // 设置类型按钮
-                        typeButtons.forEach(btn => btn.classList.remove('active'));
-                        document.querySelector(`.type-btn[data-type="${type}"]`).classList.add('active');
-                        
-                        // 显示/隐藏视频控制按钮
-                        if (type === 'video') {
-                            document.getElementById('video-controls').style.display = 'flex';
-                        } else {
-                            document.getElementById('video-controls').style.display = 'none';
-                        }
-                        
-                        // 修复：使用URL.createObjectURL处理视频文件
-                        const objectURL = URL.createObjectURL(file);
-                        applyWallpaper(objectURL, type);
-                        document.getElementById('wallpaper-input').value = "上传的文件";
-                        logDebug(`应用上传的文件作为${type === 'video' ? '视频' : '图片'}壁纸`);
-                    }
-                });
-                
-                // 预设壁纸功能
-                const presetButtons = document.querySelectorAll('.wallpaper-preset');
-                presetButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        const wallpaperUrl = this.getAttribute('data-url');
-                        document.getElementById('wallpaper-input').value = wallpaperUrl;
-                        
-                        // 根据URL判断类型
-                        const type = wallpaperUrl.includes('.mp4') || wallpaperUrl.includes('.gif') ? 'video' : 'image';
-                        
-                        // 设置类型按钮
-                        typeButtons.forEach(btn => btn.classList.remove('active'));
-                        document.querySelector(`.type-btn[data-type="${type}"]`).classList.add('active');
-                        
-                        // 显示/隐藏视频控制按钮
-                        if (type === 'video') {
-                            document.getElementById('video-controls').style.display = 'flex';
-                        } else {
-                            document.getElementById('video-controls').style.display = 'none';
-                        }
-                        
-                        applyWallpaper(wallpaperUrl, type);
-                        logDebug(`应用预设壁纸: ${wallpaperUrl}`);
-                    });
-                });
-                
-                // 随机壁纸功能
-                const randomWallpaperBtn = document.getElementById('random-wallpaper');
-                randomWallpaperBtn.addEventListener('click', function() {
-                    const wallpapers = [
-                        {url: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', type: 'image'},
-                        {url: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', type: 'image'},
-                        {url: 'https://images.unsplash.com/photo-1505506874110-6a7a69069a08?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', type: 'image'},
-                        {url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', type: 'image'},
-                        {url: 'https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4', type: 'video'},
-                        {url: 'https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif', type: 'video'}
-                    ];
-                    const randomIndex = Math.floor(Math.random() * wallpapers.length);
-                    const randomWallpaper = wallpapers[randomIndex];
-                    applyWallpaper(randomWallpaper.url, randomWallpaper.type);
-                    document.getElementById('wallpaper-input').value = randomWallpaper.url;
-                    
-                    // 设置类型按钮
-                    typeButtons.forEach(btn => btn.classList.remove('active'));
-                    document.querySelector(`.type-btn[data-type="${randomWallpaper.type}"]`).classList.add('active');
-                    
-                    // 显示/隐藏视频控制按钮
-                    if (randomWallpaper.type === 'video') {
-                        document.getElementById('video-controls').style.display = 'flex';
-                    } else {
-                        document.getElementById('video-controls').style.display = 'none';
-                    }
-                    
-                    logDebug(`应用随机壁纸: ${randomWallpaper.url}`);
-                });
-                
-                // 重置设置功能
-                const resetBtn = document.getElementById('reset-settings');
-                resetBtn.addEventListener('click', function() {
-                    localStorage.removeItem('theme');
-                    localStorage.removeItem('wallpaper');
-                    localStorage.removeItem('wallpaperType');
-                    localStorage.removeItem('themeColor');
-                    localStorage.removeItem('font');
-                    localStorage.removeItem('particlesEnabled');
-                    localStorage.removeItem('buttonStyle');
-                    document.body.classList.remove('night-mode');
-                    document.body.classList.add('day-mode');
-                    document.body.style.backgroundImage = "url('https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80')";
-                    document.body.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
-                    particlesContainer.style.display = 'block';
-                    
-                    // 移除视频背景
-                    const videoBg = document.querySelector('.video-background');
-                    videoBg.innerHTML = '';
-                    
-                    document.getElementById('wallpaper-input').value = '';
-                    
-                    // 重置主题颜色
-                    applyThemeColor('#6a11cb');
-                    
-                    // 重置字体选择器
-                    document.querySelectorAll('.font-option').forEach(option => {
-                        option.classList.remove('active');
-                        if (option.getAttribute('data-font') === "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif") {
-                            option.classList.add('active');
-                        }
-                    });
-                    
-                    // 重置按钮样式
-                    applyButtonStyle('liquid-enhanced');
-                    document.querySelectorAll('.style-option').forEach(option => {
-                        option.classList.remove('active');
-                        if (option.getAttribute('data-style') === 'liquid-enhanced') {
-                            option.classList.add('active');
-                        }
-                    });
-                    
-                    logDebug('设置已重置为默认值');
-                    updateDebugPanel();
-                    alert('设置已重置为默认值！');
-                });
-                
-                // 调试面板功能
-                const debugToggle = document.getElementById('debug-toggle');
-                const debugPanel = document.getElementById('debug-panel');
-                
-                debugToggle.addEventListener('click', function() {
-                    debugPanel.scrollIntoView({ behavior: 'smooth' });
-                });
-                
-                // 调试面板工具
-                document.getElementById('back-to-top').addEventListener('click', function() {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-                });
-                
-                document.getElementById('refresh-page').addEventListener('click', function() {
-                    location.reload();
-                });
-                
-                document.getElementById('export-settings').addEventListener('click', function() {
-                    const settings = {
-                        theme: localStorage.getItem('theme') || 'day-mode',
-                        wallpaper: localStorage.getItem('wallpaper') || 'default',
-                        wallpaperType: localStorage.getItem('wallpaperType') || 'image',
-                        themeColor: localStorage.getItem('themeColor') || '#6a11cb',
-                        font: localStorage.getItem('font') || "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-                        particlesEnabled: localStorage.getItem('particlesEnabled') || 'true',
-                        buttonStyle: localStorage.getItem('buttonStyle') || 'liquid-enhanced'
-                    };
-                    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(settings, null, 2));
-                    const downloadAnchorNode = document.createElement('a');
-                    downloadAnchorNode.setAttribute("href", dataStr);
-                    downloadAnchorNode.setAttribute("download", "search-settings.json");
-                    document.body.appendChild(downloadAnchorNode);
-                    downloadAnchorNode.click();
-                    downloadAnchorNode.remove();
-                    logDebug('设置已导出为JSON文件');
-                });
-                
-                document.getElementById('clear-cache').addEventListener('click', function() {
-                    localStorage.clear();
-                    logDebug('本地缓存已清除');
-                    updateDebugPanel();
-                });
-                
-                // GitHub仓库按钮
-                document.getElementById('github-repo').addEventListener('click', function() {
-                    window.open('https://github.com/jackk145/LUCK6X-', '_blank');
-                    logDebug('打开GitHub仓库');
-                });
-                
-                // 测试按钮功能
-                document.getElementById('test-btn-1').addEventListener('click', function() {
-                    window.open('https://littleskin.cn/skinlib?filter=cape&sort=time&page=4', '_blank');
-                    logDebug('打开测试页面: 我的世界披风库');
-                });
-                
-                document.getElementById('test-btn-2').addEventListener('click', function() {
-                    window.open('https://ewanhowell.com/plugins/minecraft-title-generator/', '_blank');
-                    logDebug('打开测试页面: Minecraft标题生成器');
-                });
-                
-                document.getElementById('test-btn-3').addEventListener('click', function() {
-                    window.open('https://textcraft.net/', '_blank');
-                    logDebug('打开测试页面: 文字艺术生成器');
-                });
-                
-                // 新增资源下载按钮功能
-                document.getElementById('test-btn-4').addEventListener('click', function() {
-                    window.open('https://workdrive.zoho.com.cn/file/dqd1m14a62490b4ef422085fdc7058380c0e9', '_blank');
-                    logDebug('打开资源: csgo测试整合包');
-                });
-                
-                document.getElementById('test-btn-5').addEventListener('click', function() {
-                    window.open('https://workdrive.zoho.com.cn/file/dqd1m02aaaab914374d428dc940655eae37e6', '_blank');
-                    logDebug('打开资源: LUCK6高版本【无饰品】');
-                });
-                
-                document.getElementById('test-btn-6').addEventListener('click', function() {
-                    window.open('https://workdrive.zoho.com.cn/file/dqd1mf40395c92c134739a2e65f5eaa073adf', '_blank');
-                    logDebug('打开资源: he world0.7【测试】');
-                });
-                
-                document.getElementById('test-btn-7').addEventListener('click', function() {
-                    window.open('https://workdrive.zoho.com.cn/file/dqd1mdaf88522b9004b92ba0a93085069bba1', '_blank');
-                    logDebug('打开资源: LUCK 6【bug过多停更】');
-                });
-                
-                // 应用壁纸的函数
-                function applyWallpaper(url, type) {
-                    // 清除当前背景
-                    document.body.style.backgroundImage = '';
-                    const videoBg = document.querySelector('.video-background');
-                    videoBg.innerHTML = '';
-                    
-                    // 保存壁纸设置
-                    localStorage.setItem('wallpaper', url);
-                    localStorage.setItem('wallpaperType', type);
-                    
-                    if (type === 'image') {
-                        // 如果是图片（包括GIF）
-                        document.body.style.backgroundImage = `url('${url}')`;
-                        document.body.style.backgroundSize = 'cover';
-                        document.body.style.backgroundPosition = 'center';
-                        document.body.style.backgroundAttachment = 'fixed'; // 固定背景
-                        document.body.style.backgroundRepeat = 'no-repeat'; // 不重复
-                    } else {
-                        // 如果是视频
-                        const video = document.createElement('video');
-                        video.autoplay = true;
-                        video.loop = true;
-                        video.muted = true;
-                        video.playsInline = true;
-                        video.src = url;
-                        
-                        // 修复：确保视频元素被正确添加到DOM
-                        videoBg.appendChild(video);
-                        
-                        // 修复：添加事件监听器处理视频加载
-                        video.addEventListener('error', function() {
-                            console.error('视频加载失败:', url);
-                            logDebug(`视频加载失败: ${url}`);
-                        });
-                    }
-                    
-                    updateDebugPanel();
-                }
-                
-                // 应用主题颜色
-                function applyThemeColor(color) {
-                    // 更新主要元素
-                    document.documentElement.style.setProperty('--primary-color', color);
-                    
-                    // 保存设置
-                    localStorage.setItem('themeColor', color);
-                }
-                
-                // 字体选择器
-                document.querySelectorAll('.font-option').forEach(option => {
-                    option.addEventListener('click', function() {
-                        const font = this.getAttribute('data-font');
-                        document.body.style.fontFamily = font;
-                        
-                        // 更新选择器状态
-                        document.querySelectorAll('.font-option').forEach(opt => {
-                            opt.classList.remove('active');
-                        });
-                        this.classList.add('active');
-                        
-                        // 保存设置
-                        localStorage.setItem('font', font);
-                        
-                        logDebug(`应用字体: ${font}`);
-                    });
-                });
-                
-                // 按钮样式选择器
-                document.querySelectorAll('.style-option').forEach(option => {
-                    option.addEventListener('click', function() {
-                        const style = this.getAttribute('data-style');
-                        
-                        // 更新选择器状态
-                        document.querySelectorAll('.style-option').forEach(opt => {
-                            opt.classList.remove('active');
-                        });
-                        this.classList.add('active');
-                        
-                        // 应用样式
-                        applyButtonStyle(style);
-                        
-                        // 保存设置
-                        localStorage.setItem('buttonStyle', style);
-                        
-                        logDebug(`应用按钮样式: ${style}`);
-                    });
-                });
-                
-                // 应用按钮样式函数
-                function applyButtonStyle(style) {
-                    const featureBtns = document.querySelectorAll('.feature-btn');
-                    
-                    // 移除所有样式类
-                    featureBtns.forEach(btn => {
-                        btn.classList.remove('cyber-style');
-                    });
-                    
-                    // 应用新样式
-                    if (style === 'cyber') {
-                        featureBtns.forEach(btn => {
-                            btn.classList.add('cyber-style');
-                        });
-                    }
-                }
-                
-                // 登录/注册功能
-                const authModal = document.getElementById('auth-modal');
-                const authClose = document.getElementById('auth-close');
-                const userBtn = document.getElementById('user-btn');
-                const userInfo = document.getElementById('user-info');
-                const logoutBtn = document.getElementById('logout-btn');
-                const showRegister = document.getElementById('show-register');
-                const showLogin = document.getElementById('show-login');
-                const tabs = document.querySelectorAll('.auth-tab');
-                const forms = document.querySelectorAll('.auth-form');
-                
-                // 打开登录模态框
-                userBtn.addEventListener('click', function() {
-                    authModal.style.display = 'flex';
-                });
-                
-                // 关闭登录模态框
-                authClose.addEventListener('click', function() {
-                    authModal.style.display = 'none';
-                });
-                
-                // 点击模态框外部关闭
-                window.addEventListener('click', function(e) {
-                    if (e.target === authModal) {
-                        authModal.style.display = 'none';
-                    }
-                });
-                
-                // 切换登录/注册标签
-                tabs.forEach(tab => {
-                    tab.addEventListener('click', function() {
-                        const tabName = this.getAttribute('data-tab');
-                        
-                        // 更新标签状态
-                        tabs.forEach(t => t.classList.remove('active'));
-                        this.classList.add('active');
-                        
-                        // 更新表单显示
-                        forms.forEach(form => {
-                            form.classList.remove('active');
-                            if (form.id === `${tabName}-form`) {
-                                form.classList.add('active');
-                            }
-                        });
-                    });
-                });
-                
-                // 显示注册表单
-                showRegister.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    tabs.forEach(t => t.classList.remove('active'));
-                    document.querySelector('.auth-tab[data-tab="register"]').classList.add('active');
-                    
-                    forms.forEach(form => {
-                        form.classList.remove('active');
-                        if (form.id === 'register-form') {
-                            form.classList.add('active');
-                        }
-                    });
-                });
-                
-                // 显示登录表单
-                showLogin.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    tabs.forEach(t => t.classList.remove('active'));
-                    document.querySelector('.auth-tab[data-tab="login"]').classList.add('active');
-                    
-                    forms.forEach(form => {
-                        form.classList.remove('active');
-                        if (form.id === 'login-form') {
-                            form.classList.add('active');
-                        }
-                    });
-                });
-                
-                // 登录表单提交
-                document.getElementById('login-form').addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const email = document.getElementById('login-email').value;
-                    const password = document.getElementById('login-password').value;
-                    
-                    // 模拟登录成功
-                    userBtn.style.display = 'none';
-                    userInfo.style.display = 'flex';
-                    document.getElementById('username-display').textContent = email.split('@')[0];
-                    document.getElementById('user-avatar').textContent = email.charAt(0).toUpperCase();
-                    
-                    // 保存登录状态
-                    localStorage.setItem('userLoggedIn', 'true');
-                    localStorage.setItem('userEmail', email);
-                    localStorage.setItem('username', email.split('@')[0]);
-                    
-                    authModal.style.display = 'none';
-                    logDebug(`用户登录: ${email}`);
-                    alert('登录成功！');
-                });
-                
-                // 注册表单提交
-                document.getElementById('register-form').addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const username = document.getElementById('register-username').value;
-                    const email = document.getElementById('register-email').value;
-                    const password = document.getElementById('register-password').value;
-                    const confirm = document.getElementById('register-confirm').value;
-                    
-                    if (password !== confirm) {
-                        alert('两次输入的密码不一致！');
-                        return;
-                    }
-                    
-                    // 模拟注册成功并登录
-                    userBtn.style.display = 'none';
-                    userInfo.style.display = 'flex';
-                    document.getElementById('username-display').textContent = username;
-                    document.getElementById('user-avatar').textContent = username.charAt(0).toUpperCase();
-                    
-                    // 保存登录状态
-                    localStorage.setItem('userLoggedIn', 'true');
-                    localStorage.setItem('userEmail', email);
-                    localStorage.setItem('username', username);
-                    
-                    authModal.style.display = 'none';
-                    logDebug(`新用户注册: ${username} (${email})`);
-                    alert('注册成功！已自动登录');
-                });
-                
-                // 退出登录
-                logoutBtn.addEventListener('click', function() {
-                    userBtn.style.display = 'block';
-                    userInfo.style.display = 'none';
-                    
-                    // 清除登录状态
-                    localStorage.removeItem('userLoggedIn');
-                    localStorage.removeItem('userEmail');
-                    localStorage.removeItem('username');
-                    
-                    logDebug('用户已退出登录');
-                });
-                
-                // 检查是否已登录
-                if (localStorage.getItem('userLoggedIn') === 'true') {
-                    userBtn.style.display = 'none';
-                    userInfo.style.display = 'flex';
-                    document.getElementById('username-display').textContent = localStorage.getItem('username') || '用户';
-                    document.getElementById('user-avatar').textContent = (localStorage.getItem('username') || 'U').charAt(0).toUpperCase();
-                }
-                
-                // 获取Windows版本
-                function getWindowsVersion() {
-                    const userAgent = navigator.userAgent;
-                    if (userAgent.includes("Windows NT 10.0")) return "Windows 10";
-                    if (userAgent.includes("Windows NT 6.3")) return "Windows 8.1";
-                    if (userAgent.includes("Windows NT 6.2")) return "Windows 8";
-                    if (userAgent.includes("Windows NT 6.1")) return "Windows 7";
-                    if (userAgent.includes("Windows NT 6.0")) return "Windows Vista";
-                    if (userAgent.includes("Windows NT 5.1")) return "Windows XP";
-                    if (userAgent.includes("Windows NT 5.0")) return "Windows 2000";
-                    if (userAgent.includes("Windows 11")) return "Windows 11";
-                    return "未知版本";
-                }
-                
-                // 获取电池信息
-                function getBatteryInfo(callback) {
-                    if ('getBattery' in navigator) {
-                        navigator.getBattery().then(function(battery) {
-                            callback({
-                                level: Math.round(battery.level * 100) + '%',
-                                charging: battery.charging ? '充电中' : '未充电'
-                            });
-                        });
-                    } else {
-                        callback({ level: '电脑不支持', charging: '' });
-                    }
-                }
-                
-                // 获取性能信息
-                function getPerformanceInfo() {
-                    const memory = performance.memory;
-                    const now = performance.now();
-                    
-                    // 计算性能评分（伪代码，实际中需要更复杂的计算）
-                    const perfScore = Math.min(100, Math.round(
-                        (navigator.hardwareConcurrency || 4) * 10 +
-                        (memory ? (memory.jsHeapSizeLimit / 1024 / 1024) : 200) / 5
-                    ));
-                    
-                    return {
-                        perfScore: perfScore,
-                        cpuCores: navigator.hardwareConcurrency || '未知',
-                        memory: memory ? Math.round(memory.jsHeapSizeLimit / 1024 / 1024) + 'MB' : '未知'
-                    };
-                }
-                
-                // 更新调试面板信息
-                function updateDebugPanel() {
-                    const theme = document.body.classList.contains('night-mode') ? '夜间模式' : '日间模式';
-                    const wallpaper = localStorage.getItem('wallpaper') || '默认壁纸';
-                    const wallpaperType = localStorage.getItem('wallpaperType') || 'image';
-                    const themeColor = localStorage.getItem('themeColor') || '#6a11cb';
-                    const font = localStorage.getItem('font') || '默认';
-                    const buttonStyle = localStorage.getItem('buttonStyle') || 'iOS磨砂效果';
-                    const userAgent = navigator.userAgent;
-                    const screenRes = `${screen.width}×${screen.height}`;
-                    const windowSize = `${window.innerWidth}×${window.innerHeight}`;
-                    const windowsVersion = getWindowsVersion();
-                    const perfInfo = getPerformanceInfo();
-                    const particlesEnabled = localStorage.getItem('particlesEnabled') !== 'false' ? '开启' : '关闭';
-                    
-                    // 更新用户设置
-                    document.getElementById('user-settings-list').innerHTML = `
-                        <li>当前主题: <span class="value">${theme}</span></li>
-                        <li>壁纸类型: <span class="value">${wallpaperType === 'image' ? '静态图片' : '动态视频/GIF'}</span></li>
-                        <li>主题颜色: <span class="value">${themeColor}</span></li>
-                        <li>界面字体: <span class="value">${font}</span></li>
-                        <li>按钮样式: <span class="value">${buttonStyle === 'cyber' ? '赛博科技风' : 'iOS磨砂效果'}</span></li>
-                        <li>粒子效果: <span class="value">${particlesEnabled}</span></li>
-                        <li>用户状态: <span class="value">${localStorage.getItem('userLoggedIn') === 'true' ? '已登录' : '未登录'}</span></li>
-                    `;
-                    
-                    // 更新系统信息
-                    document.getElementById('system-info-list').innerHTML = `
-                        <li>浏览器: <span class="value">${getBrowserName()}</span></li>
-                        <li>操作系统: <span class="value">${getOSName()} ${windowsVersion}</span></li>
-                        <li>屏幕分辨率: <span class="value">${screenRes}</span></li>
-                        <li>窗口尺寸: <span class="value">${windowSize}</span></li>
-                        <li>设备类型: <span class="value">${isMobile() ? '移动设备' : '桌面设备'}</span></li>
-                        <li>网络状态: <span class="value">${navigator.onLine ? '在线' : '离线'}</span></li>
-                    `;
-                    
-                    // 更新性能信息
-                    document.getElementById('performance-info-list').innerHTML = `
-                        <li>CPU核心数: <span class="value">${perfInfo.cpuCores}</span></li>
-                        <li>内存限制: <span class="value">${perfInfo.memory}</span></li>
-                        <li>性能评分: <span class="value">${perfInfo.perfScore}/100</span></li>
-                    `;
-                    
-                    // 更新性能指示器
-                    document.getElementById('performance-fill').style.width = perfInfo.perfScore + '%';
-                    
-                    // 添加电池信息（异步）
-                    getBatteryInfo(function(battery) {
-                        const batteryInfo = document.createElement('li');
-                        batteryInfo.innerHTML = `电池状态: 
-                            <span class="value battery-info">
-                                <span class="battery-level">
-                                    <span class="battery-fill" style="width:${battery.level === '电脑不支持' ? '0' : parseInt(battery.level)}%"></span>
-                                </span>
-                                <span class="battery-percentage">${battery.level} ${battery.charging}</span>
-                            </span>`;
-                        document.getElementById('system-info-list').appendChild(batteryInfo);
-                    });
-                }
-                
-                // 获取浏览器名称
-                function getBrowserName() {
-                    const userAgent = navigator.userAgent;
-                    if (userAgent.includes("Chrome")) return "LUCK6 X提供软件";
-                    if (userAgent.includes("Firefox")) return "未知";
-                    if (userAgent.includes("Safari")) return "未知";
-                    if (userAgent.includes("Edge")) return "Edge";
-                    if (userAgent.includes("Opera")) return "未知";
-                    if (userAgent.includes("MSIE")) return "未知";
-                    return "LUCK6 X提供软件";
-                }
-                
-                // 获取操作系统名称
-                function getOSName() {
-                    const userAgent = navigator.userAgent;
-                    if (userAgent.includes("Win")) return "Windows";
-                    if (userAgent.includes("Mac")) return "MacOS";
-                    if (userAgent.includes("Linux")) return "Linux";
-                    if (userAgent.includes("Android")) return "Android";
-                    if (userAgent.includes("iOS")) return "iOS";
-                    return "未知系统";
-                }
-                
-                // 检测是否为移动设备
-                function isMobile() {
-                    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                }
-                
-                // 调试日志
-                function logDebug(message) {
-                    const debugOutput = document.getElementById('debug-output');
-                    debugOutput.innerHTML += `> ${message}<br>`;
-                    debugOutput.parentElement.scrollTop = debugOutput.parentElement.scrollHeight;
-                }
-                
-                // 滚动时显示/隐藏调试面板
-                let lastScrollTop = 0;
-                window.addEventListener('scroll', function() {
-                    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-                    
-                    if (currentScroll > lastScrollTop && currentScroll > 200) {
-                        debugPanel.style.display = 'block';
-                    }
-                    
-                    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
-                });
-                
-                // 初始化调试面板
-                updateDebugPanel();
-                
-                // 更新时间显示
-                function updateTime() {
-                    const now = new Date();
-                    document.getElementById('current-time').textContent = now.toLocaleTimeString();
-                }
-                setInterval(updateTime, 1000);
-                updateTime();
-                
-                // 新增的制作者按钮功能
-                document.getElementById('creator-douyin').addEventListener('click', function() {
-                    window.open('https://www.douyin.com/user/MS4wLjABAAAARy4OPh14CAjzCAThmUyWuoHtNz2jo9y4AXW0VoQdJ0UAdH9HSKQA0Czes672cNce?from_tab_name=main', '_blank');
-                    logDebug('打开制作者抖音主页');
-                });
-                
-                document.getElementById('creator-bilibili').addEventListener('click', function() {
-                    window.open('https://space.bilibili.com/229098055?spm_id_from=333.337.0.0', '_blank');
-                    logDebug('打开制作者B站主页');
-                });
-                
-                document.getElementById('creator-kuaishou').addEventListener('click', function() {
-                    window.open('https://www.kuaishou.com/profile/3x3fyraqb4c9d4i', '_blank');
-                    logDebug('打开赞助者快手主页');
-                });
-                
-                // 幸运值测试功能
-                document.getElementById('lucky-test-btn').addEventListener('click', function() {
-                    const luckyNumber = Math.floor(Math.random() * 100) + 1;
-                    const luckyResult = document.getElementById('lucky-result');
-                    const luckyFill = document.getElementById('lucky-fill');
-                    
-                    let comment = '';
-                    if (luckyNumber <= 10) {
-                        comment = '6【无话可说了】';
-                    } else if (luckyNumber <= 30) {
-                        comment = '一般般而已，继续加油';
-                    } else if (luckyNumber <= 70) {
-                        comment = '在高点！？';
-                    } else if (luckyNumber <= 90) {
-                        comment = '运气不赖吗！';
-                    } else {
-                        comment = 'good luck！';
-                    }
-                    
-                    // 显示结果
-                    luckyResult.innerHTML = `
-                        <div class="lucky-number">${luckyNumber}</div>
-                        <div class="lucky-comment">${comment}</div>
-                    `;
-                    
-                    // 更新进度条
-                    luckyFill.style.width = `${luckyNumber}%`;
-                    
-                    logDebug(`测试幸运值: ${luckyNumber} - ${comment}`);
-                });
-                
-                // 天气功能
-                const weatherWidget = document.getElementById('weather-widget');
-                const weatherRefresh = document.getElementById('weather-refresh');
-                const weatherInfo = weatherWidget.querySelector('.weather-info');
-                
-                // 获取天气函数
-                async function fetchWeather(city = 'auto') {
-                    // 使用OpenWeatherMap API
-                    const apiKey = 'YOUR_API_KEY'; // 替换为您的API密钥
-                    let apiUrl;
-                    if (city === 'auto') {
-                        // 通过IP获取位置
-                        apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=Beijing&appid=${apiKey}&units=metric&lang=zh_cn`;
-                    } else {
-                        apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=zh_cn`;
-                    }
-                    
-                    try {
-                        const response = await fetch(apiUrl);
-                        const data = await response.json();
-                        if (data.cod === 200) {
-                            const temp = Math.round(data.main.temp);
-                            const description = data.weather[0].description;
-                            const iconCode = data.weather[0].icon;
-                            const iconUrl = `http://openweathermap.org/img/wn/${iconCode}.png`;
-                            weatherInfo.innerHTML = `<img src="${iconUrl}" alt="${description}"> ${temp}°C ${description}`;
-                        } else {
-                            weatherInfo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> 天气获取失败`;
-                        }
-                    } catch (error) {
-                        weatherInfo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> 天气获取失败`;
-                    }
-                }
-                
-                // 点击刷新天气
-                weatherRefresh.addEventListener('click', function() {
-                    weatherInfo.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 加载中...';
-                    fetchWeather();
-                });
-                
-                // 初始获取天气
-                fetchWeather();
-                
-                // 按钮点击波纹效果
-                document.querySelectorAll('button').forEach(button => {
-                    button.addEventListener('click', function(e) {
-                        // 创建波纹元素
-                        const ripple = document.createElement('span');
-                        ripple.classList.add('ripple');
-                        
-                        // 设置波纹位置
-                        const rect = button.getBoundingClientRect();
-                        const size = Math.max(rect.width, rect.height);
-                        const x = e.clientX - rect.left - size / 2;
-                        const y = e.clientY - rect.top - size / 2;
-                        
-                        ripple.style.width = ripple.style.height = size + 'px';
-                        ripple.style.left = x + 'px';
-                        ripple.style.top = y + 'px';
-                        
-                        // 添加到按钮
-                        this.appendChild(ripple);
-                        
-                        // 动画结束后移除
-                        setTimeout(() => {
-                            ripple.remove();
-                        }, 600);
-                    });
-                });
-            }, 3000);
+            });
         });
     </script>
 </body>
