@@ -1910,46 +1910,92 @@
             color: white;
         }
         
-        /* 新增：粒子颜色选择器 */
-        .particle-color-picker {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.2);
+        /* 新增：浮动元素效果 */
+        .floating-element {
+            position: absolute;
+            z-index: -1;
+            opacity: 0.3;
+            animation: float 15s infinite linear;
         }
         
-        .particle-color-picker h3 {
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(20px, 40px) rotate(90deg); }
+            50% { transform: translate(40px, 0) rotate(180deg); }
+            75% { transform: translate(20px, -40px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
         }
         
-        .particle-colors {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
+        .floating-element:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #ff3c3c, transparent);
+            border-radius: 50%;
+            animation-duration: 25s;
         }
         
-        .particle-color {
+        .floating-element:nth-child(2) {
+            top: 30%;
+            left: 80%;
             width: 40px;
             height: 40px;
+            background: radial-gradient(circle, #00fffc, transparent);
             border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid transparent;
+            animation-duration: 30s;
+            animation-delay: -5s;
         }
         
-        .particle-color:hover {
-            transform: scale(1.1);
+        .floating-element:nth-child(3) {
+            top: 70%;
+            left: 20%;
+            width: 25px;
+            height: 25px;
+            background: radial-gradient(circle, #ff00ff, transparent);
+            border-radius: 50%;
+            animation-duration: 20s;
+            animation-delay: -10s;
         }
         
-        .particle-color.active {
-            border-color: white;
-            transform: scale(1.1);
-            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        .floating-element:nth-child(4) {
+            top: 50%;
+            left: 50%;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, #ffff00, transparent);
+            border-radius: 50%;
+            animation-duration: 35s;
+            animation-delay: -15s;
+        }
+        
+        /* 新增：动态背景渐变 */
+        .dynamic-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -5;
+            background: linear-gradient(45deg, #1a2a6c, #b21f1f, #1a2a6c, #1a2a6c);
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* 新增：文字流光效果 */
+        .text-glow {
+            animation: textGlow 2s infinite alternate;
+        }
+        
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+            100% { text-shadow: 0 0 15px rgba(255,255,255,0.9); }
         }
     </style>
 </head>
@@ -1969,6 +2015,15 @@
     
     <!-- 科技网格背景 -->
     <div class="cyber-grid"></div>
+    
+    <!-- 新增：动态背景渐变 -->
+    <div class="dynamic-gradient"></div>
+    
+    <!-- 新增：浮动元素 -->
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
 
     <!-- 视频背景容器 -->
     <div class="video-background" id="video-background"></div>
@@ -2066,7 +2121,7 @@
     
     <div class="main-container">
         <div class="logo">
-            <h1>LUCK6X</h1>
+            <h1 class="text-glow">LUCK6X</h1>
         </div>
         
         <div class="search-container">
@@ -2122,19 +2177,7 @@
                 <div class="toggle-btn" id="particles-toggle"></div>
             </div>
             
-            <!-- 粒子颜色选择器 -->
-            <div class="particle-color-picker">
-                <h3><i class="fas fa-palette"></i> 粒子颜色设置</h3>
-                <p>选择粒子效果的颜色</p>
-                <div class="particle-colors">
-                    <div class="particle-color active" style="background:#ff3c3c;" data-color="#ff3c3c"></div>
-                    <div class="particle-color" style="background:#00fffc;" data-color="#00fffc"></div>
-                    <div class="particle-color" style="background:#ff00ff;" data-color="#ff00ff"></div>
-                    <div class="particle-color" style="background:#00ff00;" data-color="#00ff00"></div>
-                    <div class="particle-color" style="background:#ffff00;" data-color="#ffff00"></div>
-                    <div class="particle-color" style="background:#ff9900;" data-color="#ff9900"></div>
-                </div>
-            </div>
+            <!-- 删除粒子颜色设置 -->
             
             <div class="wallpaper-control">
                 <h3><i class="fas fa-wallpaper"></i> 自定义壁纸</h3>
@@ -2480,7 +2523,6 @@
             const savedThemeColor = localStorage.getItem('themeColor') || '#6a11cb';
             const savedFont = localStorage.getItem('font') || "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
             const savedButtonStyle = localStorage.getItem('buttonStyle') || 'liquid-enhanced';
-            const savedParticleColor = localStorage.getItem('particleColor') || '#ff3c3c';
             
             // 应用保存的主题
             if (savedTheme === 'night-mode') {
@@ -2519,34 +2561,6 @@
                 if (option.getAttribute('data-style') === savedButtonStyle) {
                     option.classList.add('active');
                 }
-            });
-            
-            // 设置粒子颜色选择器状态
-            document.querySelectorAll('.particle-color').forEach(color => {
-                if (color.getAttribute('data-color') === savedParticleColor) {
-                    color.classList.add('active');
-                }
-            });
-            
-            // 粒子颜色选择器
-            document.querySelectorAll('.particle-color').forEach(color => {
-                color.addEventListener('click', function() {
-                    const colorValue = this.getAttribute('data-color');
-                    
-                    // 更新选择器状态
-                    document.querySelectorAll('.particle-color').forEach(c => {
-                        c.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                    
-                    // 更新粒子颜色
-                    updateParticleColor(colorValue);
-                    
-                    // 保存设置
-                    localStorage.setItem('particleColor', colorValue);
-                    
-                    logDebug(`更新粒子颜色为: ${colorValue}`);
-                });
             });
             
             // 壁纸类型切换
@@ -2837,7 +2851,6 @@
                 localStorage.removeItem('font');
                 localStorage.removeItem('particlesEnabled');
                 localStorage.removeItem('buttonStyle');
-                localStorage.removeItem('particleColor');
                 document.body.classList.remove('night-mode');
                 document.body.classList.add('day-mode');
                 document.body.style.backgroundImage = "url('https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80')";
@@ -2869,16 +2882,6 @@
                         option.classList.add('active');
                     }
                 });
-                
-                // 重置粒子颜色
-                updateParticleColor('#ff3c3c');
-                document.querySelectorAll('.particle-color').forEach(color => {
-                    color.classList.remove('active');
-                    if (color.getAttribute('data-color') === '#ff3c3c') {
-                        color.classList.add('active');
-                    }
-                });
-                localStorage.setItem('particleColor', '#ff3c3c');
                 
                 logDebug('设置已重置为默认值');
                 updateDebugPanel();
@@ -2913,8 +2916,7 @@
                     themeColor: localStorage.getItem('themeColor') || '#6a11cb',
                     font: localStorage.getItem('font') || "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
                     particlesEnabled: localStorage.getItem('particlesEnabled') || 'true',
-                    buttonStyle: localStorage.getItem('buttonStyle') || 'liquid-enhanced',
-                    particleColor: localStorage.getItem('particleColor') || '#ff3c3c'
+                    buttonStyle: localStorage.getItem('buttonStyle') || 'liquid-enhanced'
                 };
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(settings, null, 2));
                 const downloadAnchorNode = document.createElement('a');
@@ -3083,27 +3085,17 @@
             
             // 初始化粒子效果
             function initParticles() {
-                // 从本地存储获取粒子颜色
-                const savedParticleColor = localStorage.getItem('particleColor') || '#ff3c3c';
-                
-                // 设置颜色选择器的值
-                document.querySelectorAll('.particle-color').forEach(color => {
-                    if (color.getAttribute('data-color') === savedParticleColor) {
-                        color.classList.add('active');
-                    }
-                });
-                
                 particlesJS('particles-js', {
                     particles: {
                         number: {
-                            value: 80,
+                            value: 150, // 增加粒子数量
                             density: {
                                 enable: true,
                                 value_area: 800
                             }
                         },
                         color: {
-                            value: savedParticleColor
+                            value: ["#ff3c3c", "#00fffc", "#ff00ff", "#00ff00", "#ffff00", "#ff9900"] // 多种随机颜色
                         },
                         shape: {
                             type: "circle",
@@ -3113,7 +3105,7 @@
                             }
                         },
                         opacity: {
-                            value: 0.5,
+                            value: 0.7, // 增加不透明度，使粒子更明显
                             random: true,
                             anim: {
                                 enable: true,
@@ -3123,25 +3115,25 @@
                             }
                         },
                         size: {
-                            value: 3,
+                            value: 5, // 增加粒子大小
                             random: true,
                             anim: {
                                 enable: true,
-                                speed: 2,
-                                size_min: 0.1,
+                                speed: 3, // 加快粒子大小变化速度
+                                size_min: 0.3,
                                 sync: false
                             }
                         },
                         line_linked: {
                             enable: true,
-                            distance: 150,
-                            color: savedParticleColor,
+                            distance: 100, // 减小连线距离，使连线更密集
+                            color: "#ffffff", // 连线颜色改为白色
                             opacity: 0.4,
                             width: 1
                         },
                         move: {
                             enable: true,
-                            speed: 1,
+                            speed: 2, // 增加粒子移动速度
                             direction: "none",
                             random: true,
                             straight: false,
@@ -3163,7 +3155,7 @@
                             },
                             onclick: {
                                 enable: true,
-                                mode: "push"
+                                mode: "bubble"
                             },
                             resize: true
                         },
@@ -3171,32 +3163,30 @@
                             grab: {
                                 distance: 140,
                                 line_linked: {
-                                    opacity: 1
+                                    opacity: 1 // 鼠标悬停时连线不透明度为1
                                 }
+                            },
+                            bubble: {
+                                distance: 200,
+                                size: 40,
+                                duration: 2,
+                                opacity: 8,
+                                speed: 3
+                            },
+                            repulse: {
+                                distance: 100,
+                                duration: 0.4
                             },
                             push: {
                                 particles_nb: 4
+                            },
+                            remove: {
+                                particles_nb: 2
                             }
                         }
                     },
                     retina_detect: true
                 });
-            }
-            
-            // 更新粒子颜色
-            function updateParticleColor(color) {
-                // 获取particles.js实例
-                if (window.pJSDom && window.pJSDom.length > 0) {
-                    const particles = window.pJSDom[0].pJS.particles;
-                    particles.color.value = color;
-                    particles.line_linked.color = color;
-                    
-                    // 重新初始化粒子系统
-                    window.pJSDom[0].pJS.fn.vendors.destroy();
-                    window.pJSDom[0].pJS.fn.vendors.init();
-                    
-                    logDebug(`粒子颜色更新为: ${color}`);
-                }
             }
             
             // 登录/注册功能
@@ -3400,7 +3390,6 @@
                 const themeColor = localStorage.getItem('themeColor') || '#6a11cb';
                 const font = localStorage.getItem('font') || '默认';
                 const buttonStyle = localStorage.getItem('buttonStyle') || 'iOS磨砂效果';
-                const particleColor = localStorage.getItem('particleColor') || '#ff3c3c';
                 const particlesEnabled = localStorage.getItem('particlesEnabled') !== 'false' ? '开启' : '关闭';
                 const userAgent = navigator.userAgent;
                 const screenRes = `${screen.width}×${screen.height}`;
@@ -3416,7 +3405,6 @@
                     <li>界面字体: <span class="value">${font}</span></li>
                     <li>按钮样式: <span class="value">${buttonStyle === 'cyber' ? '赛博科技风' : 'iOS磨砂效果'}</span></li>
                     <li>粒子效果: <span class="value">${particlesEnabled}</span></li>
-                    <li>粒子颜色: <span class="value">${particleColor}</span></li>
                     <li>用户状态: <span class="value">${localStorage.getItem('userLoggedIn') === 'true' ? '已登录' : '未登录'}</span></li>
                 `;
                 
