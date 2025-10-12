@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUCK6 X版 - 个性化搜索引擎</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s, opacity 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            background: linear-gradient(135deg, #0a0a2a, #1a1a3a, #0a0a2a);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            color: #e0e0e0;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 动态壁纸容器 */
+        .dynamic-wallpaper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            overflow: hidden;
+        }
+        
+        .dynamic-wallpaper video,
+        .dynamic-wallpaper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .wallpaper-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        /* 浮动粒子背景 - 简化版 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translateY(-20px) translateX(10px) rotate(180deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(0) translateX(0) rotate(360deg);
+                opacity: 0.5;
+            }
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        .main-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1;
+        }
+
+        .logo {
+            margin-bottom: 40px;
+            text-align: center;
+            animation: fadeInDown 1s ease;
+        }
+
+        .logo h1 {
+            font-size: 4.5rem;
+            letter-spacing: -2px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            background: linear-gradient(45deg, #8a2be2, #9370db, #4169e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            animation: logoGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes logoGlow {
+            0% {
+                filter: drop-shadow(0 0 5px rgba(138, 43, 226, 0.3));
+            }
+            100% {
+                filter: drop-shadow(0 0 15px rgba(138, 43, 226, 0.6));
+            }
+        }
+
+        .logo h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 4px;
+            background: linear-gradient(to right, #8a2be2, #9370db, #4169e1);
+            border-radius: 2px;
+            animation: pulseLine 2s infinite;
+        }
+
+        @keyframes pulseLine {
+            0%, 100% { width: 60%; opacity: 1; }
+            50% { width: 80%; opacity: 0.7; }
+        }
+
+        .logo p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-top: 10px;
+            color: #d0d0d0;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+            font-weight: 300;
+        }
+
+        .search-container {
+            margin-bottom: 30px;
+            position: relative;
+            width: 100%;
+            max-width: 750px;
+            animation: fadeInUp 1s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .search-box {
+            display: flex;
+            flex: 1;
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            /* iOS 磨砂玻璃效果 */
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            animation: searchBoxGlow 5s ease-in-out infinite alternate;
+        }
+
+        @keyframes searchBoxGlow {
+            0% {
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            }
+            100% {
+                box-shadow: 0 8px 30px rgba(138, 43, 226, 0.3);
+            }
+        }
+
+        .search-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(138, 43, 226, 0.4);
+            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .search-input {
+            flex-grow: 1;
+            padding: 18px 24px;
+            border: none;
+            outline: none;
+            font-size: 1.15rem;
+            background: transparent;
+            color: #e0e0e0;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+        }
+
+        .search-input::placeholder {
+            color: rgba(224, 224, 224, 0.7);
+        }
+
+        .search-input:focus {
+            box-shadow: inset 0 0 8px rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* 增强的搜索按钮磨砂效果 */
+        .search-btn {
+            padding: 0 24px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.15);
+            color: #e0e0e0;
+            transition: all 0.3s;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .search-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .search-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            transform: scale(1.05);
+        }
+
+        .search-btn:hover::before {
+            left: 100%;
+        }
+
+        .search-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 改进的搜索引擎选择器样式 - 放在搜索栏右侧 */
+        .search-engine-selector {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0 15px;
+            border-radius: 30px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            height: 54px;
+            min-width: 160px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .search-engine-selector:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .search-engine-selector.active {
+            background: rgba(138, 43, 226, 0.2);
+            border-color: rgba(138, 43, 226, 0.4);
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
+        }
+        
+        /* 隐藏原始select元素 */
+        .search-engine-selector select {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* 自定义选择器显示区域 */
+        .selected-engine {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #e0e0e0;
+            text-align: center;
+            padding: 5px 8px;
+        }
+        
+        /* 自定义选择器箭头 */
+        .search-engine-selector::after {
+            content: '\f078';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 0.9rem;
+            color: #e0e0e0;
+            margin-left: 8px;
+            pointer-events: none;
+            transition: transform 0.3s;
+        }
+        
+        .search-engine-selector.active::after {
+            transform: rotate(180deg);
+            color: #9370db;
+        }
+        
+        .search-engine-icon {
+            margin-right: 10px;
+            font-size: 1rem;
+            color: #9370db;
+            transition: color 0.3s;
+        }
+        
+        .search-engine-selector:hover .search-engine-icon {
+            color: #ffffff;
+        }
+        
+        /* 选择器下拉菜单样式 */
+        .engine-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            /* 添加滚动支持 */
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(138, 43, 226, 0.5) rgba(30, 30, 30, 0.8);
+        }
+
+        /* 自定义滚动条样式 */
+        .engine-dropdown::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .engine-dropdown::-webkit-scrollbar-track {
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: 10px;
+        }
+
+        .engine-dropdown::-webkit-scrollbar-thumb {
+            background: rgba(138, 43, 226, 0.5);
+            border-radius: 10px;
+        }
+
+        .engine-dropdown::-webkit-scrollbar-thumb:hover {
+            background: rgba(138, 43, 226, 0.7);
+        }
+        
+        .search-engine-selector.active .engine-dropdown {
+            max-height: 300px;
+            padding: 10px 0;
+            margin-top: 8px;
+        }
+        
+        .engine-option {
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            /* 添加滑动反馈 */
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            /* 磨砂效果 */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .engine-option:last-child {
+            border-bottom: none;
+        }
+        
+        .engine-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .engine-option.selected {
+            background: rgba(138, 43, 226, 0.2);
+            color: #9370db;
+        }
+
+        /* 滑动选择时的视觉反馈 */
+        .engine-option.active {
+            background: rgba(138, 43, 226, 0.3);
+            transform: scale(0.98);
+        }
+        
+        .engine-option .engine-name {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .engine-option .engine-check {
+            color: #9370db;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .engine-option.selected .engine-check {
+            opacity: 1;
+        }
+        
+        /* 搜索建议和历史记录容器 */
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            max-height: 0;
+            overflow-y: auto;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: none;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .search-suggestions.active {
+            max-height: 400px;
+            padding: 10px 0;
+        }
+        
+        .suggestion-section {
+            margin-bottom: 15px;
+        }
+        
+        .suggestion-title {
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            color: #9370db;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .suggestion-title i {
+            margin-right: 8px;
+            font-size: 0.8rem;
+        }
+        
+        .search-suggestion {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .search-suggestion:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .search-suggestion:last-child {
+            border-bottom: none;
+        }
+        
+        .search-suggestion i {
+            margin-right: 10px;
+            color: #9370db;
+            font-size: 0.9rem;
+        }
+        
+        .clear-history {
+            padding: 10px 20px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        
+        .clear-history:hover {
+            color: #9370db;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        /* 壁纸设置面板 */
+        .settings-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+        
+        .settings-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            color: #e0e0e0;
+            font-size: 1.2rem;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .settings-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1) rotate(30deg);
+        }
+        
+        .wallpaper-panel {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            width: 300px;
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            transform: translateY(-10px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 101;
+        }
+        
+        .wallpaper-panel.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .wallpaper-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #9370db;
+            display: flex;
+            align-items: center;
+        }
+        
+        .wallpaper-title i {
+            margin-right: 10px;
+        }
+        
+        .wallpaper-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .wallpaper-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .wallpaper-option:hover {
+            transform: translateX(5px);
+            border-color: rgba(147, 112, 219, 0.5);
+        }
+        
+        .wallpaper-option.active {
+            border-color: #9370db;
+            box-shadow: 0 0 10px rgba(147, 112, 219, 0.5);
+            background: rgba(147, 112, 219, 0.1);
+        }
+        
+        .wallpaper-option .wallpaper-preview {
+            width: 50px;
+            height: 30px;
+            border-radius: 5px;
+            margin-right: 15px;
+            overflow: hidden;
+        }
+        
+        .wallpaper-option .wallpaper-name {
+            font-weight: 500;
+        }
+        
+        .custom-wallpaper {
+            margin-top: 15px;
+        }
+        
+        .upload-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: rgba(147, 112, 219, 0.2);
+            border: 1px dashed #9370db;
+            border-radius: 8px;
+            color: #e0e0e0;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-btn:hover {
+            background: rgba(147, 112, 219, 0.3);
+        }
+        
+        .upload-btn i {
+            margin-right: 8px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        /* 响应式设计 - 重点优化移动设备体验 */
+        @media (max-width: 1200px) {
+            .logo h1 {
+                font-size: 4rem;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .logo h1 {
+                font-size: 3.5rem;
+            }
+            
+            .search-container {
+                max-width: 90%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .logo h1 {
+                font-size: 3rem;
+            }
+            
+            .logo p {
+                font-size: 1.1rem;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                gap: 15px;
+                max-width: 95%;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .search-engine-selector {
+                width: 100%;
+                min-width: auto;
+                justify-content: center;
+                height: 50px;
+            }
+            
+            .search-engine-selector.active .engine-dropdown {
+                width: 100%;
+                left: 0;
+            }
+            
+            .search-input {
+                padding: 15px 20px;
+                font-size: 1.1rem;
+            }
+            
+            .search-btn {
+                padding: 0 20px;
+            }
+            
+            .wallpaper-panel {
+                width: 280px;
+                right: -10px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .logo h1 {
+                font-size: 2.5rem;
+            }
+            
+            .logo p {
+                font-size: 1rem;
+            }
+            
+            .search-container {
+                max-width: 100%;
+            }
+            
+            .search-engine-selector {
+                height: 48px;
+                padding: 0 12px;
+            }
+            
+            .selected-engine {
+                font-size: 0.95rem;
+            }
+            
+            .search-engine-icon {
+                font-size: 0.9rem;
+                margin-right: 8px;
+            }
+            
+            .search-engine-selector::after {
+                font-size: 0.8rem;
+                margin-left: 6px;
+            }
+            
+            .search-input {
+                padding: 14px 18px;
+                font-size: 1rem;
+            }
+            
+            .search-btn {
+                padding: 0 18px;
+                font-size: 1.1rem;
+            }
+            
+            .engine-option {
+                padding: 10px 12px;
+            }
+            
+            .search-suggestion {
+                padding: 10px 16px;
+            }
+            
+            .wallpaper-panel {
+                width: 260px;
+                right: -20px;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .logo h1 {
+                font-size: 2.2rem;
+            }
+            
+            .logo p {
+                font-size: 0.9rem;
+            }
+            
+            .search-engine-selector {
+                height: 46px;
+            }
+            
+            .selected-engine {
+                font-size: 0.9rem;
+            }
+            
+            .search-input {
+                padding: 12px 16px;
+                font-size: 0.95rem;
+            }
+            
+            .search-btn {
+                padding: 0 16px;
+                font-size: 1rem;
+            }
+            
+            .wallpaper-panel {
+                width: 240px;
+                right: -30px;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 底部信息 */
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            padding: 0 20px;
+            animation: fadeIn 2s ease 1s both;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* 搜索按钮动画 */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(138, 43, 226, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(138, 43, 226, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(138, 43, 226, 0);
+            }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        /* 按钮点击涟漪效果 */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 动态壁纸容器 -->
+    <div class="dynamic-wallpaper" id="dynamic-wallpaper">
+        <div class="wallpaper-overlay"></div>
+    </div>
+    
+    <!-- 浮动粒子背景 -->
+    <div class="particles" id="particles"></div>
+    
+    <div class="overlay"></div>
+    
+    <!-- 壁纸设置面板 -->
+    <div class="settings-panel">
+        <button class="settings-btn" id="settings-btn">
+            <i class="fas fa-sliders-h"></i>
+        </button>
+        <div class="wallpaper-panel" id="wallpaper-panel">
+            <div class="wallpaper-title">
+                <i class="fas fa-image"></i> 自定义壁纸
+            </div>
+            <div class="wallpaper-options" id="wallpaper-options">
+                <div class="wallpaper-option active" data-bg="default">
+                    <div class="wallpaper-preview" style="background: linear-gradient(135deg, #0a0a2a, #1a1a3a, #0a0a2a);"></div>
+                    <div class="wallpaper-name">默认背景</div>
+                </div>
+            </div>
+            <div class="custom-wallpaper">
+                <label for="wallpaper-upload" class="upload-btn">
+                    <i class="fas fa-upload"></i> 上传自定义壁纸
+                </label>
+                <input type="file" id="wallpaper-upload" class="file-input" accept="image/*, video/*">
+            </div>
+        </div>
+    </div>
+    
+    <div class="main-container">
+        <div class="logo">
+            <h1>LUCK6X</h1>
+        </div>
+        
+        <div class="search-container">
+            <form id="search-form" class="search-box">
+                <input type="text" id="search-input" class="search-input" placeholder="搜索网络世界..." autocomplete="off">
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+            
+            <!-- 改进的搜索引擎选择器 - 放在搜索栏右侧 -->
+            <div class="search-engine-selector" id="search-engine-selector">
+                <i class="search-engine-icon fas fa-globe"></i>
+                <div class="selected-engine" id="selected-engine">必应</div>
+                <select id="search-engine">
+                    <option value="bing">必应</option>
+                    <option value="google">谷歌</option>
+                    <option value="baidu">百度</option>
+                    <option value="sogou">搜狗</option>
+                    <option value="duckduckgo">DuckDuckGo</option>
+                    <option value="yahoo">Yahoo</option>
+                    <option value="yandex">Yandex</option>
+                </select>
+                
+                <!-- 自定义下拉菜单 -->
+                <div class="engine-dropdown">
+                    <div class="engine-option selected" data-value="bing">
+                        <span class="engine-name">必应</span>
+                        <i class="engine-check fas fa-check"></i>
+                    </div>
+                    <div class="engine-option" data-value="google">
+                        <span class="engine-name">谷歌</span>
+                        <i class="engine-check fas fa-check"></i>
+                    </div>
+                    <div class="engine-option" data-value="baidu">
+                        <span class="engine-name">百度</span>
+                        <i class="engine-check fas fa-check"></i>
+                    </div>
+                    <div class="engine-option" data-value="sogou">
+                        <span class="engine-name">搜狗</span>
+                        <i class="engine-check fas fa-check"></i>
+                    </div>
+                    <div class="engine-option" data-value="duckduckgo">
+                        <span class="engine-name">DuckDuckGo</span>
+                        <i class="engine-check fas fa-check"></i>
+                    </div>
+                    <div class="engine-option" data-value="yahoo">
+                        <span class="engine-name">Yahoo</span>
+                        <i class="engine-check fas fa-check"></i>
+                    </div>
+                    <div class="engine-option" data-value="yandex">
+                        <span class="engine-name">Yandex</span>
+                        <i class="engine-check fas fa-check"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 搜索建议和历史记录容器 -->
+        <div class="search-suggestions" id="search-suggestions">
+            <!-- 搜索建议部分 -->
+            <div class="suggestion-section" id="suggestions-section">
+                <div class="suggestion-title">
+                    <i class="fas fa-lightbulb"></i> 搜索建议
+                </div>
+                <!-- 动态内容 -->
+            </div>
+            
+            <!-- 搜索历史部分 -->
+            <div class="suggestion-section" id="history-section">
+                <div class="suggestion-title">
+                    <i class="fas fa-history"></i> 搜索历史
+                </div>
+                <!-- 动态内容 -->
+            </div>
+            
+            <!-- 清除历史按钮 -->
+            <div class="clear-history" id="clear-history">
+                清除搜索历史
+            </div>
+        </div>
+        
+        <!-- 底部信息 -->
+        <div class="footer">
+            <p>© 2025 LUCK6X</p>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 创建浮动粒子
+            createParticles();
+            
+            // 搜索功能
+            const searchForm = document.getElementById('search-form');
+            const searchInput = document.getElementById('search-input');
+            const searchSuggestions = document.getElementById('search-suggestions');
+            const suggestionsSection = document.getElementById('suggestions-section');
+            const historySection = document.getElementById('history-section');
+            const clearHistoryBtn = document.getElementById('clear-history');
+            const searchEngineSelector = document.getElementById('search-engine-selector');
+            const searchEngineSelect = document.getElementById('search-engine');
+            const selectedEngine = document.getElementById('selected-engine');
+            const engineOptions = document.querySelectorAll('.engine-option');
+            const engineDropdown = document.querySelector('.engine-dropdown');
+            
+            // 壁纸功能
+            const settingsBtn = document.getElementById('settings-btn');
+            const wallpaperPanel = document.getElementById('wallpaper-panel');
+            const wallpaperOptions = document.querySelectorAll('.wallpaper-option');
+            const wallpaperUpload = document.getElementById('wallpaper-upload');
+            const dynamicWallpaper = document.getElementById('dynamic-wallpaper');
+            
+            // 初始化下拉菜单状态
+            updateSelectedEngine();
+            
+            // 搜索历史数组
+            let searchHistory = JSON.parse(localStorage.getItem('luck6x-search-history')) || [];
+            
+            // 壁纸功能
+            settingsBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                wallpaperPanel.classList.toggle('active');
+            });
+            
+            // 点击页面其他区域关闭壁纸面板
+            document.addEventListener('click', function() {
+                wallpaperPanel.classList.remove('active');
+            });
+            
+            // 壁纸选择
+            wallpaperOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const bgType = this.getAttribute('data-bg');
+                    
+                    // 移除所有选项的激活状态
+                    wallpaperOptions.forEach(opt => opt.classList.remove('active'));
+                    
+                    // 设置当前选项为激活状态
+                    this.classList.add('active');
+                    
+                    // 应用壁纸
+                    applyWallpaper(bgType);
+                    
+                    // 保存到本地存储
+                    localStorage.setItem('luck6x-wallpaper', bgType);
+                });
+            });
+            
+            // 自定义壁纸上传
+            wallpaperUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        // 移除所有选项的激活状态
+                        wallpaperOptions.forEach(opt => opt.classList.remove('active'));
+                        
+                        // 应用自定义壁纸
+                        if (file.type.startsWith('video/')) {
+                            // 视频文件
+                            dynamicWallpaper.innerHTML = '<video autoplay muted loop><source src="' + event.target.result + '" type="' + file.type + '"></video><div class="wallpaper-overlay"></div>';
+                        } else {
+                            // 图片文件
+                            dynamicWallpaper.innerHTML = '<img src="' + event.target.result + '" alt="自定义壁纸"><div class="wallpaper-overlay"></div>';
+                        }
+                        
+                        // 保存到本地存储
+                        localStorage.setItem('luck6x-wallpaper', 'custom');
+                        localStorage.setItem('luck6x-custom-wallpaper', event.target.result);
+                        localStorage.setItem('luck6x-wallpaper-type', file.type);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // 应用壁纸
+            function applyWallpaper(type) {
+                // 清空动态壁纸容器
+                dynamicWallpaper.innerHTML = '<div class="wallpaper-overlay"></div>';
+                
+                switch(type) {
+                    case 'default':
+                        // 使用默认渐变背景
+                        document.body.style.background = 'linear-gradient(135deg, #0a0a2a, #1a1a3a, #0a0a2a)';
+                        document.body.style.backgroundSize = '400% 400%';
+                        document.body.style.animation = 'gradientBG 15s ease infinite';
+                        break;
+                    case 'custom':
+                        const customWallpaper = localStorage.getItem('luck6x-custom-wallpaper');
+                        const wallpaperType = localStorage.getItem('luck6x-wallpaper-type');
+                        if (customWallpaper) {
+                            if (wallpaperType && wallpaperType.startsWith('video/')) {
+                                // 视频文件
+                                dynamicWallpaper.innerHTML = '<video autoplay muted loop><source src="' + customWallpaper + '" type="' + wallpaperType + '"></video><div class="wallpaper-overlay"></div>';
+                            } else {
+                                // 图片文件
+                                dynamicWallpaper.innerHTML = '<img src="' + customWallpaper + '" alt="自定义壁纸"><div class="wallpaper-overlay"></div>';
+                            }
+                        }
+                        break;
+                }
+                
+                // 如果选择了自定义壁纸，重置body背景
+                if (type !== 'default') {
+                    document.body.style.background = 'none';
+                    document.body.style.animation = 'none';
+                }
+            }
+            
+            // 加载保存的壁纸设置
+            const savedWallpaper = localStorage.getItem('luck6x-wallpaper');
+            if (savedWallpaper) {
+                // 找到对应的选项并激活
+                wallpaperOptions.forEach(option => {
+                    if (option.getAttribute('data-bg') === savedWallpaper) {
+                        option.classList.add('active');
+                    }
+                });
+                
+                // 应用壁纸
+                applyWallpaper(savedWallpaper);
+            }
+            
+            // 搜索功能
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const searchInputValue = searchInput.value.trim();
+                const searchEngine = searchEngineSelect.value;
+                
+                if (searchInputValue === '') {
+                    // 添加抖动动画效果
+                    searchInput.style.animation = 'shake 0.5s';
+                    setTimeout(() => {
+                        searchInput.style.animation = '';
+                    }, 500);
+                    return;
+                }
+                
+                // 保存搜索历史
+                saveSearchHistory(searchInputValue);
+                
+                // 根据选择的搜索引擎进行搜索
+                let searchUrl;
+                switch(searchEngine) {
+                    case 'google':
+                        searchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchInputValue)}`;
+                        break;
+                    case 'baidu':
+                        searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(searchInputValue)}`;
+                        break;
+                    case 'sogou':
+                        searchUrl = `https://www.sogou.com/web?query=${encodeURIComponent(searchInputValue)}`;
+                        break;
+                    case 'duckduckgo':
+                        searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(searchInputValue)}`;
+                        break;
+                    case 'yahoo':
+                        searchUrl = `https://search.yahoo.com/search?p=${encodeURIComponent(searchInputValue)}`;
+                        break;
+                    case 'yandex':
+                        searchUrl = `https://yandex.com/search/?text=${encodeURIComponent(searchInputValue)}`;
+                        break;
+                    default: // Bing
+                        searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(searchInputValue)}`;
+                }
+                
+                // 添加搜索按钮动画
+                const searchBtn = document.querySelector('.search-btn');
+                searchBtn.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    searchBtn.style.transform = '';
+                    window.open(searchUrl, '_blank');
+                }, 150);
+            });
+            
+            // 搜索引擎选择器交互
+            searchEngineSelector.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.classList.toggle('active');
+            });
+            
+            // 点击页面其他区域关闭下拉菜单
+            document.addEventListener('click', function(e) {
+                if (!searchEngineSelector.contains(e.target)) {
+                    searchEngineSelector.classList.remove('active');
+                }
+            });
+            
+            // 选择引擎选项
+            engineOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const value = this.getAttribute('data-value');
+                    searchEngineSelect.value = value;
+                    updateSelectedEngine();
+                    
+                    // 添加选择反馈
+                    searchEngineSelector.style.transform = 'scale(1.05)';
+                    setTimeout(() => {
+                        searchEngineSelector.style.transform = '';
+                        searchEngineSelector.classList.remove('active');
+                    }, 300);
+                    
+                    // 保存到本地存储
+                    localStorage.setItem('luck6x-search-engine', value);
+                });
+            });
+            
+            // 更新选中的引擎
+            function updateSelectedEngine() {
+                const selectedValue = searchEngineSelect.value;
+                
+                // 更新下拉菜单中的选中状态
+                engineOptions.forEach(option => {
+                    if (option.getAttribute('data-value') === selectedValue) {
+                        option.classList.add('selected');
+                        // 更新显示文本
+                        selectedEngine.textContent = option.querySelector('.engine-name').textContent;
+                    } else {
+                        option.classList.remove('selected');
+                    }
+                });
+            }
+            
+            // 搜索建议功能
+            const popularSearches = [
+                "最新科技新闻",
+                "人工智能发展",
+                "编程学习资源",
+                "设计灵感",
+                "旅行目的地推荐",
+                "健康生活方式",
+                "电影推荐",
+                "音乐排行榜"
+            ];
+            
+            searchInput.addEventListener('input', function() {
+                const value = this.value.trim().toLowerCase();
+                updateSuggestions(value);
+            });
+            
+            // 搜索框焦点事件
+            searchInput.addEventListener('focus', function() {
+                searchSuggestions.classList.add('active');
+                updateSuggestions(this.value.trim().toLowerCase());
+                updateHistory();
+            });
+            
+            // 点击页面其他区域隐藏搜索建议
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
+                    searchSuggestions.classList.remove('active');
+                }
+            });
+            
+            // 更新搜索建议
+            function updateSuggestions(value) {
+                // 清空现有建议
+                const suggestionsContainer = suggestionsSection.querySelector('.suggestion-title').nextElementSibling;
+                if (suggestionsContainer && suggestionsContainer.classList.contains('search-suggestion')) {
+                    suggestionsContainer.remove();
+                }
+                
+                // 创建新的建议容器
+                const suggestionsList = document.createElement('div');
+                suggestionsList.className = 'suggestions-list';
+                
+                if (value.length > 0) {
+                    // 显示匹配的搜索建议
+                    const matches = popularSearches.filter(item => 
+                        item.toLowerCase().includes(value)
+                    ).slice(0, 5);
+                    
+                    if (matches.length > 0) {
+                        matches.forEach(match => {
+                            const suggestion = document.createElement('div');
+                            suggestion.className = 'search-suggestion';
+                            suggestion.innerHTML = `<i class="fas fa-search"></i> ${match}`;
+                            suggestion.addEventListener('click', function() {
+                                searchInput.value = match;
+                                searchForm.dispatchEvent(new Event('submit'));
+                            });
+                            suggestionsList.appendChild(suggestion);
+                        });
+                    } else {
+                        const noSuggestion = document.createElement('div');
+                        noSuggestion.className = 'search-suggestion';
+                        noSuggestion.innerHTML = `<i class="fas fa-info-circle"></i> 暂无相关建议`;
+                        noSuggestion.style.color = 'rgba(255, 255, 255, 0.5)';
+                        noSuggestion.style.cursor = 'default';
+                        suggestionsList.appendChild(noSuggestion);
+                    }
+                } else {
+                    // 显示热门搜索
+                    popularSearches.slice(0, 5).forEach(item => {
+                        const suggestion = document.createElement('div');
+                        suggestion.className = 'search-suggestion';
+                        suggestion.innerHTML = `<i class="fas fa-fire"></i> ${item}`;
+                        suggestion.addEventListener('click', function() {
+                            searchInput.value = item;
+                            searchForm.dispatchEvent(new Event('submit'));
+                        });
+                        suggestionsList.appendChild(suggestion);
+                    });
+                }
+                
+                // 移除旧的建议列表
+                const oldList = suggestionsSection.querySelector('.suggestions-list');
+                if (oldList) {
+                    oldList.remove();
+                }
+                
+                // 添加新的建议列表
+                suggestionsSection.appendChild(suggestionsList);
+            }
+            
+            // 更新搜索历史
+            function updateHistory() {
+                // 清空现有历史
+                const historyContainer = historySection.querySelector('.suggestion-title').nextElementSibling;
+                if (historyContainer && historyContainer.classList.contains('search-suggestion')) {
+                    historyContainer.remove();
+                }
+                
+                // 创建新的历史容器
+                const historyList = document.createElement('div');
+                historyList.className = 'history-list';
+                
+                if (searchHistory.length > 0) {
+                    // 显示最近的搜索历史（最多5条）
+                    searchHistory.slice(0, 5).forEach(item => {
+                        const historyItem = document.createElement('div');
+                        historyItem.className = 'search-suggestion';
+                        historyItem.innerHTML = `<i class="fas fa-clock"></i> ${item}`;
+                        historyItem.addEventListener('click', function() {
+                            searchInput.value = item;
+                            searchForm.dispatchEvent(new Event('submit'));
+                        });
+                        historyList.appendChild(historyItem);
+                    });
+                } else {
+                    const noHistory = document.createElement('div');
+                    noHistory.className = 'search-suggestion';
+                    noHistory.innerHTML = `<i class="fas fa-info-circle"></i> 暂无搜索历史`;
+                    noHistory.style.color = 'rgba(255, 255, 255, 0.5)';
+                    noHistory.style.cursor = 'default';
+                    historyList.appendChild(noHistory);
+                }
+                
+                // 移除旧的历史列表
+                const oldList = historySection.querySelector('.history-list');
+                if (oldList) {
+                    oldList.remove();
+                }
+                
+                // 添加新的历史列表
+                historySection.appendChild(historyList);
+            }
+            
+            // 保存搜索历史
+            function saveSearchHistory(query) {
+                // 避免重复
+                const index = searchHistory.indexOf(query);
+                if (index !== -1) {
+                    searchHistory.splice(index, 1);
+                }
+                
+                // 添加到历史记录开头
+                searchHistory.unshift(query);
+                
+                // 限制历史记录数量
+                if (searchHistory.length > 10) {
+                    searchHistory = searchHistory.slice(0, 10);
+                }
+                
+                // 保存到本地存储
+                localStorage.setItem('luck6x-search-history', JSON.stringify(searchHistory));
+                
+                // 更新显示
+                updateHistory();
+            }
+            
+            // 清除搜索历史
+            clearHistoryBtn.addEventListener('click', function() {
+                searchHistory = [];
+                localStorage.setItem('luck6x-search-history', JSON.stringify(searchHistory));
+                updateHistory();
+                
+                // 添加反馈效果
+                this.style.color = '#9370db';
+                setTimeout(() => {
+                    this.style.color = '';
+                }, 500);
+            });
+            
+            // 加载保存的搜索引擎设置
+            const savedSearchEngine = localStorage.getItem('luck6x-search-engine');
+            if (savedSearchEngine) {
+                searchEngineSelect.value = savedSearchEngine;
+                updateSelectedEngine();
+            }
+            
+            // 创建浮动粒子函数
+            function createParticles() {
+                const particlesContainer = document.getElementById('particles');
+                const particleCount = 15; // 减少粒子数量以降低内存占用
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    
+                    // 随机大小
+                    const size = Math.random() * 5 + 2;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    
+                    // 随机位置
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.top = `${Math.random() * 100}%`;
+                    
+                    // 随机动画延迟和持续时间
+                    const delay = Math.random() * 20;
+                    const duration = 15 + Math.random() * 15;
+                    particle.style.animationDelay = `${delay}s`;
+                    particle.style.animationDuration = `${duration}s`;
+                    
+                    particlesContainer.appendChild(particle);
+                }
+            }
+            
+            // 添加抖动动画的CSS
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                    20%, 40%, 60%, 80% { transform: translateX(5px); }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>
